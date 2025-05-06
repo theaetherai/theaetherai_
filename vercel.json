@@ -17,6 +17,5 @@
       "memory": 1024,
       "maxDuration": 60
     }
-  },
-  "buildCommand": "node --stack-size=4000 ./node_modules/.bin/next build"
+  }
 }

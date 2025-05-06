@@ -35,49 +35,9 @@ function updatePackageJson() {
 
 // Create a custom .babelrc with optimizations
 function createOptimizedBabelrc() {
-  const babelrcPath = path.join(process.cwd(), '.babelrc');
-  
-  // Check if .babelrc already exists
-  if (fs.existsSync(babelrcPath)) {
-    try {
-      const babelrc = JSON.parse(fs.readFileSync(babelrcPath, 'utf8'));
-      // Check if we already have optimizations
-      if (babelrc.plugins && babelrc.plugins.some(p => p === 'optimize-react' || p[0] === 'optimize-react')) {
-        console.log('✅ .babelrc already includes optimization plugins');
-        return false;
-      }
-      
-      // Add optimization plugins
-      babelrc.plugins = babelrc.plugins || [];
-      babelrc.plugins.push("@babel/plugin-transform-react-inline-elements");
-      babelrc.plugins.push("@babel/plugin-transform-react-constant-elements");
-      
-      fs.writeFileSync(babelrcPath, JSON.stringify(babelrc, null, 2));
-      console.log('✅ Updated .babelrc with React optimization plugins');
-      return true;
-    } catch (err) {
-      console.error('❌ Failed to update .babelrc:', err.message);
-      return false;
-    }
-  } else {
-    // Create new .babelrc with optimizations
-    const babelrc = {
-      "presets": ["next/babel"],
-      "plugins": [
-        "@babel/plugin-transform-react-inline-elements",
-        "@babel/plugin-transform-react-constant-elements"
-      ]
-    };
-    
-    try {
-      fs.writeFileSync(babelrcPath, JSON.stringify(babelrc, null, 2));
-      console.log('✅ Created .babelrc with React optimization plugins');
-      return true;
-    } catch (err) {
-      console.error('❌ Failed to create .babelrc:', err.message);
-      return false;
-    }
-  }
+  console.log('⚠️ Skipping .babelrc creation to avoid dependency issues');
+  console.log('✅ Using Next.js default Babel configuration');
+  return false;
 }
 
 // Update next.config.js to include optimization settings
@@ -186,8 +146,11 @@ function updateVercelConfig() {
       vercelConfig.functions["app/**/*.js"].memory = 1024; // Hobby plan limit
       vercelConfig.functions["app/**/*.js"].maxDuration = 60;
       
-      // Add build command with increased stack size
-      vercelConfig.buildCommand = "node --stack-size=4000 ./node_modules/.bin/next build";
+      // Remove build command to use the one from package.json
+      if (vercelConfig.buildCommand) {
+        delete vercelConfig.buildCommand;
+        console.log('✅ Removed buildCommand from vercel.json to use package.json build script');
+      }
       
       // Add NODE_OPTIONS environment variable
       vercelConfig.env = vercelConfig.env || {};
@@ -209,7 +172,6 @@ function updateVercelConfig() {
           "maxDuration": 60
         }
       },
-      "buildCommand": "node --stack-size=4000 ./node_modules/.bin/next build",
       "env": {
         "NODE_OPTIONS": "--max-old-space-size=1024"
       }

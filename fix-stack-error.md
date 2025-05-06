@@ -47,9 +47,8 @@ npm run increase-stack
 
 This will:
 - Update build script to use increased stack size
-- Create optimized Babel configuration
 - Update next.config.js with performance settings
-- Update vercel.json with higher memory limits
+- Update vercel.json with optimized memory limits
 
 ### 2. Find and Fix Circular Dependencies
 
@@ -132,6 +131,22 @@ This configuration:
 - Adds environment variables to optimize Node.js memory usage
 
 > **Note:** Vercel Hobby plans are limited to 1024 MB memory for serverless functions. If you need more memory for complex applications, consider upgrading to a Pro plan by creating a team.
+
+### 6. Troubleshooting Build Errors
+
+If you encounter build errors after applying these fixes, try these troubleshooting steps:
+
+1. **Dependency Issues**: 
+   - Remove any custom .babelrc or .babel configuration that might require additional dependencies
+   - Let Next.js handle the default Babel configuration
+
+2. **Webpack Errors**:
+   - Simplify your webpack configuration if custom changes are causing conflicts
+   - Remove any plugins that may not be compatible with the latest Next.js version
+
+3. **Module Resolution Errors**:
+   - Check for typos in import paths
+   - Make sure all required dependencies are properly installed
 
 ## Prevention Strategies
 

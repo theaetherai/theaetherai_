@@ -1,5 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disable strict mode to reduce recursive renders
+  reactStrictMode: false,
+  
+  // Optimize build process
+  swcMinify: false, // Use Terser for more stable minification
+  
+  experimental: {
+    // Better code splitting and reduced bundle size
+    optimizeCss: true,
+    
+    // Optimize module resolution
+    esmExternals: 'loose',
+    
+    // More aggressive tree shaking
+    forceSwcTransforms: true,
+  },
   typescript: {
     // Disable type checking completely during build - Vercel is too strict
     ignoreBuildErrors: true,
@@ -39,7 +55,6 @@ const nextConfig = {
   },
   // Ensure compilation includes proper paths
   experimental: {
-    esmExternals: 'loose',
     // Enable output file tracing for easier debugging
     outputFileTracingRoot: process.cwd(),
     // Disable strict mode for error handling
