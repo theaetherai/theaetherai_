@@ -1,0 +1,467 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base light theme */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 240 10% 20%; /* Dark gray text for contrast */
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 240 10% 20%; /* Dark text on cards */
+    --popover: 0 0% 100%; /* White popover */
+    --popover-foreground: 240 10% 20%; /* Dark text on popover */
+    
+    /* Modern primary color */
+    --primary: 250 70% 60%; /* Vibrant purple #8250F7 */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    
+    /* Light secondary color */
+    --secondary: 250 30% 95%; /* Light lavender #EEE9FD */
+    --secondary-foreground: 250 60% 30%; /* Dark purple on secondary */
+    
+    /* Soft accent color */
+    --accent: 330 80% 65%; /* Soft pink #F55F9E */
+    --accent-foreground: 0 0% 100%; /* White on accent */
+    
+    /* Refined supporting colors */
+    --muted: 220 20% 97%; /* Very light gray-blue */
+    --muted-foreground: 240 10% 45%; /* Medium gray text */
+    --border: 240 15% 92%; /* Light gray border */
+    --input: 240 15% 92%; /* Light input */
+    --ring: 250 70% 60%; /* Match primary - Purple */
+    --radius: 0.75rem;
+    
+    /* Animation durations */
+    --duration-fast: 150ms;
+    --duration-standard: 300ms;
+    --duration-slow: 500ms;
+    --duration-slower: 700ms;
+    
+    /* Animation easings */
+    --ease-standard: cubic-bezier(0.33, 1, 0.68, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    
+    /* Enhanced Data Visualization Color System - Light Theme */
+    /* Primary categorical data - for non-semantic data points */
+    --chart-1: 250 70% 60%; /* Primary Brand - Purple #8250F7 */
+    --chart-2: 330 80% 65%; /* Accent - Pink #F55F9E */
+    --chart-3: 190 90% 50%; /* Turquoise #18C5D9 */
+    --chart-4: 270 70% 65%; /* Lavender #9E7BF5 */
+    --chart-5: 145 70% 50%; /* Mint Green #26C281 */
+    --chart-6: 40 90% 65%; /* Amber #FDCA65 */
+    --chart-7: 320 75% 65%; /* Pink #EB6AC1 */
+    
+    /* Semantic color meanings */
+    --chart-success: 145 65% 50%; /* Success - Green #26C281 */
+    --chart-warning: 35 95% 65%; /* Warning - Amber #FDCA65 */
+    --chart-error: 360 85% 65%; /* Error/Danger - Red #F97171 */
+    --chart-info: 210 90% 65%; /* Information - Soft Blue #64A5F7 */
+    --chart-neutral: 230 20% 65%; /* Neutral - Gray #94A3B8 */
+    
+    /* Sequential & diverging scales for comparisons */
+    --chart-sequential-1: 250 85% 45%; /* Darkest Purple */
+    --chart-sequential-2: 250 80% 55%; /* Darker Purple */
+    --chart-sequential-3: 250 75% 65%; /* Medium Purple */
+    --chart-sequential-4: 250 70% 75%; /* Lighter Purple */
+    --chart-sequential-5: 250 65% 85%; /* Lightest Purple */
+    
+    --chart-diverging-negative-2: 360 90% 65%; /* Strong Negative Red */
+    --chart-diverging-negative-1: 360 85% 75%; /* Moderate Negative Red */
+    --chart-diverging-neutral: 230 10% 70%; /* Neutral Gray */
+    --chart-diverging-positive-1: 145 65% 65%; /* Moderate Positive Green */
+    --chart-diverging-positive-2: 145 80% 55%; /* Strong Positive Green */
+
+    /* Elevation System - Light Mode */
+    --elevation-ring-color: 250 70% 60% / 0.1; /* Primary with alpha */
+    --elevation-border-color: 240 15% 92%; /* Light Border */
+    --elevation-surface-1: 0 0% 100%; /* Flat surface - White */
+    --elevation-surface-2: 0 0% 98%; /* Slightly raised - Off-white */
+    --elevation-surface-3: 0 0% 100%; /* Floating - Pure White */
+    --elevation-surface-4: 0 0% 100%; /* Overlay - Pure White */
+    --elevation-surface-5: 0 0% 100%; /* Modal - Pure White */
+    
+    /* Shadow definitions for light mode */
+    --shadow-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(130, 80, 247, 0.05);
+    --shadow-elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(130, 80, 247, 0.08);
+    --shadow-elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(130, 80, 247, 0.1);
+    --shadow-elevation-4: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(130, 80, 247, 0.12);
+    --shadow-elevation-5: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(130, 80, 247, 0.15);
+    
+    /* Gradient definitions for light mode */
+    --gradient-elevation-1: linear-gradient(180deg, rgba(255, 255, 255, 0.01) 0%, rgba(255, 255, 255, 0) 100%);
+    --gradient-elevation-2: linear-gradient(180deg, rgba(130, 80, 247, 0.02) 0%, rgba(130, 80, 247, 0) 100%);
+    
+    /* Special gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(250, 70%, 60%) 0%, hsl(270, 70%, 65%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(330, 80%, 65%) 0%, hsl(350, 80%, 65%) 100%);
+  }
+
+  .dark {
+    --background: 230 25% 12%; /* Deep blue-gray */
+    --foreground: 210 25% 98%; /* Light text */
+    --card: 225 25% 15%; /* Slightly lighter surface */
+    --card-foreground: 210 25% 98%; /* Light text */
+    --popover: 225 25% 15%; /* Slightly lighter surface */
+    --popover-foreground: 210 25% 98%; /* Light text */
+    
+    /* Updated dark mode colors to match new light theme */
+    --primary: 250 70% 65%; /* Brighter purple for dark mode */
+    --primary-foreground: 0 0% 100%; /* White text */
+    
+    --secondary: 250 40% 25%; /* Darker lavender for dark mode */
+    --secondary-foreground: 250 90% 90%; /* Light purple text */
+    
+    --accent: 330 75% 70%; /* Brighter pink for dark mode */
+    --accent-foreground: 0 0% 100%; /* White text */
+    
+    --muted: 225 30% 18%; /* Deeper muted blue-gray */
+    --muted-foreground: 215 20% 75%; /* Lighter slate */
+    
+    --border: 225 30% 18%; /* Deeper border */
+    --input: 225 30% 18%; /* Deeper input */
+    --ring: 250 70% 65%; /* Match primary - Brighter purple */
+    
+    /* Enhanced Data Visualization Color System - Dark Mode */
+    /* Primary categorical data - adjusted for dark mode contrast */
+    --chart-1: 175 75% 55%; /* Primary Brand - Brighter Teal #27DED0 */
+    --chart-2: 210 85% 70%; /* Secondary Brand - Brighter Blue #7DB1F8 */
+    --chart-3: 15 75% 70%; /* Accent - Brighter Coral #FA8F7A */
+    --chart-4: 270 75% 70%; /* Brighter Lavender #B08FF7 */
+    --chart-5: 145 75% 55%; /* Brighter Mint Green #3ED196 */
+    --chart-6: 40 95% 70%; /* Brighter Amber #FDD37E */
+    --chart-7: 320 80% 70%; /* Brighter Pink #EE7FCA */
+    
+    /* Semantic color meanings - Dark mode adjusted */
+    --chart-success: 145 80% 55%; /* Success - Brighter Green #3ED196 */
+    --chart-warning: 35 100% 70%; /* Warning - Brighter Amber #FDD37E */
+    --chart-error: 360 95% 70%; /* Error/Danger - Brighter Red #FA8F8F */
+    --chart-info: 215 85% 70%; /* Information - Brighter Blue #7DB1F8 */
+    --chart-neutral: 230 30% 75%; /* Neutral - Light Gray #CBD5E1 */
+    
+    /* Sequential & diverging scales for comparisons - Dark mode adjusted */
+    --chart-sequential-1: 175 85% 40%; /* Darkest #18B9AC */
+    --chart-sequential-2: 175 80% 50%; /* Darker #20D1C2 */
+    --chart-sequential-3: 175 75% 60%; /* Medium #35E3D6 */
+    --chart-sequential-4: 175 70% 70%; /* Lighter #66EBE2 */
+    --chart-sequential-5: 175 65% 80%; /* Lightest #97F2EB */
+    
+    --chart-diverging-negative-2: 360 95% 70%; /* Strong Negative #FA8F8F */
+    --chart-diverging-negative-1: 360 90% 80%; /* Moderate Negative #FCB3B3 */
+    --chart-diverging-neutral: 230 20% 80%; /* Neutral #CBD5E1 */
+    --chart-diverging-positive-1: 145 75% 70%; /* Moderate Positive #66E6B3 */
+    --chart-diverging-positive-2: 145 85% 60%; /* Strong Positive #3ED196 */
+
+    /* Elevation System - Dark Mode */
+    --elevation-ring-color: 175 70% 50% / 0.15; /* Primary with alpha */
+    --elevation-border-color: 225 30% 16%; /* Slightly lighter than border */
+    --elevation-surface-1: 222 47% 9%; /* Base level - #141C2E */
+    --elevation-surface-2: 225 50% 12%; /* Raised - #1A2234 */
+    --elevation-surface-3: 225 47% 15%; /* Floating - Slightly lighter */
+    --elevation-surface-4: 225 45% 18%; /* Overlay - Even lighter */
+    --elevation-surface-5: 225 42% 20%; /* Modal - Lightest */
+    
+    /* Shadow definitions for dark mode */
+    --shadow-elevation-1: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(25, 205, 190, 0.05);
+    --shadow-elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(25, 205, 190, 0.1);
+    --shadow-elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(25, 205, 190, 0.15);
+    --shadow-elevation-4: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(25, 205, 190, 0.2);
+    --shadow-elevation-5: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(25, 205, 190, 0.25);
+    
+    /* Gradient definitions for dark mode */
+    --gradient-elevation-1: linear-gradient(180deg, rgba(26, 34, 52, 1) 0%, rgba(20, 28, 46, 1) 100%);
+    --gradient-elevation-2: linear-gradient(180deg, rgba(32, 41, 63, 1) 0%, rgba(26, 34, 52, 1) 100%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography System */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl font-extrabold md:text-5xl lg:text-6xl;
+    @apply leading-tighter;
+  }
+
+  h2 {
+    @apply text-3xl font-bold md:text-4xl;
+    @apply leading-tight;
+  }
+
+  h3 {
+    @apply text-2xl font-semibold md:text-3xl;
+    @apply leading-tight;
+  }
+
+  h4 {
+    @apply text-xl font-semibold;
+    @apply leading-snug;
+  }
+
+  h5 {
+    @apply text-lg font-medium;
+    @apply leading-snug;
+  }
+
+  h6 {
+    @apply text-base font-medium;
+    @apply leading-normal;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
+    @apply mb-4 last:mb-0;
+  }
+  
+  .lead {
+    @apply text-xl text-foreground;
+    @apply mb-6;
+  }
+  
+  small, .text-small {
+    @apply text-sm;
+  }
+  
+  .text-tiny {
+    @apply text-xs;
+  }
+}
+
+.fade-layer {
+  position: relative;
+}
+
+.fade-layer::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to top, hsl(var(--background)), transparent);
+  pointer-events: none;
+}
+
+.fade-layer--side::after {
+  top: 0;
+  right: 0;
+  bottom: auto;
+  left: auto;
+  height: 100%;
+  width: 140px;
+  background: linear-gradient(to right, transparent, hsl(var(--background)));
+}
+
+.text-radial {
+  background: radial-gradient(
+    circle at center, 
+    hsl(175 80% 45%) 0%, /* Teal - primary */
+    hsl(210 90% 65%) 50%, /* Soft Blue - secondary */
+    hsl(15 80% 65%) 100% /* Coral - accent */
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
+.snippet--gradient {
+  background: linear-gradient(
+    135deg, 
+    hsla(175, 80%, 45%, 0.05) 0%, 
+    hsla(210, 90%, 65%, 0.05) 50%,
+    hsla(15, 80%, 65%, 0.05) 100%
+  );
+  border: 1px solid hsla(175, 80%, 45%, 0.1);
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsla(var(--muted));
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(175 50% 80%); /* Light teal based on primary */
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(175 60% 70%); /* Slightly darker teal on hover */
+}
+
+/* Elevation Classes */
+.elevation-1 {
+  background-color: hsl(var(--elevation-surface-1));
+  box-shadow: var(--shadow-elevation-1);
+  border: 1px solid hsla(var(--elevation-border-color), 0.05);
+}
+
+.dark .elevation-1 {
+  background-color: hsl(var(--elevation-surface-1));
+  box-shadow: var(--shadow-elevation-1);
+  border-color: hsla(var(--elevation-border-color), 0.1);
+}
+
+.elevation-2 {
+  background-color: hsl(var(--elevation-surface-2));
+  box-shadow: var(--shadow-elevation-2);
+  border: 1px solid hsla(var(--elevation-border-color), 0.08);
+}
+
+.dark .elevation-2 {
+  background-color: hsl(var(--elevation-surface-2));
+  box-shadow: var(--shadow-elevation-2);
+  border-color: hsla(var(--elevation-border-color), 0.15);
+}
+
+.elevation-3 {
+  background-color: hsl(var(--elevation-surface-3));
+  box-shadow: var(--shadow-elevation-3);
+  border: 1px solid hsla(var(--elevation-border-color), 0.1);
+}
+
+.dark .elevation-3 {
+  background-color: hsl(var(--elevation-surface-3));
+  box-shadow: var(--shadow-elevation-3);
+  border-color: hsla(var(--elevation-border-color), 0.2);
+}
+
+.elevation-4 {
+  background-color: hsl(var(--elevation-surface-4));
+  box-shadow: var(--shadow-elevation-4);
+  border: 1px solid hsla(var(--elevation-border-color), 0.12);
+}
+
+.dark .elevation-4 {
+  background-color: hsl(var(--elevation-surface-4));
+  box-shadow: var(--shadow-elevation-4);
+  border-color: hsla(var(--elevation-border-color), 0.25);
+}
+
+.elevation-5 {
+  background-color: hsl(var(--elevation-surface-5));
+  box-shadow: var(--shadow-elevation-5);
+  border: 1px solid hsla(var(--elevation-border-color), 0.15);
+}
+
+.dark .elevation-5 {
+  background-color: hsl(var(--elevation-surface-5));
+  box-shadow: var(--shadow-elevation-5);
+  border-color: hsla(var(--elevation-border-color), 0.3);
+}
+
+.elevation-transition {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.interactive-elevation:hover {
+  @apply -translate-y-0.5;
+}
+
+.interactive-elevation:active {
+  @apply translate-y-0;
+}
+
+/* Animation classes */
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes floatAnimation {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-5px); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--duration-standard) var(--ease-standard) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-standard) var(--ease-standard) forwards;
+}
+
+.animate-float {
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+
+/* Staggered animation delays */
+.delay-1 { animation-delay: 100ms; }
+.delay-2 { animation-delay: 200ms; }
+.delay-3 { animation-delay: 300ms; }
+.delay-4 { animation-delay: 400ms; }
+.delay-5 { animation-delay: 500ms; }
+
+/* Global Sleek Border Styles */
+.sleek-border {
+  @apply border-2 border-border/50 hover:border-border/70 transition-colors duration-300;
+}
+
+.sleek-border-primary {
+  @apply border-2 border-primary/30 hover:border-primary/50 transition-colors duration-300;
+}
+
+.sleek-border-accent {
+  @apply border-2 border-accent/30 hover:border-accent/50 transition-colors duration-300;
+}
+
+.sleek-border-subtle {
+  @apply border border-border/40 hover:border-border/60 transition-colors duration-300;
+}
+
+.sleek-card {
+  @apply border-2 border-border/50 rounded-lg transition-all duration-300 elevation-2;
+}
+
+.sleek-card:hover {
+  @apply border-border/70;
+  box-shadow: var(--shadow-elevation-3);
+}
+
+.sleek-input {
+  @apply border-2 border-border/60 hover:border-border/80 focus:border-primary/40 rounded-lg transition-colors;
+}
+
+.sleek-avatar {
+  @apply border border-border/60 elevation-1;
+}

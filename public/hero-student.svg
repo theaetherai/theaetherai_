@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Background representing carpet/floor -->
+  <rect width="800" height="600" fill="#f5f5f5"/>
+  
+  <!-- Student figure -->
+  <g transform="translate(350, 300)">
+    <!-- Body -->
+    <ellipse cx="0" cy="-20" rx="80" ry="100" fill="#ffcc33"/>
+    
+    <!-- Head -->
+    <circle cx="0" cy="-120" r="60" fill="#ffd6b3"/>
+    <path d="M-30,-100 Q0,-80 30,-100" stroke="#333" fill="none" stroke-width="2"/>
+    
+    <!-- Hair -->
+    <path d="M-40,-160 Q-30,-180 0,-160 Q30,-180 40,-160" fill="#333"/>
+    
+    <!-- Laptop -->
+    <rect x="-80" y="20" width="160" height="10" fill="#aaa"/>
+    <rect x="-80" y="-70" width="160" height="90" fill="#333"/>
+    <rect x="-70" y="-60" width="140" height="70" fill="#6cb4ee"/>
+    
+    <!-- Notebook -->
+    <rect x="-150" y="-30" width="60" height="80" fill="#fff" transform="rotate(-10)"/>
+    <line x1="-150" y1="-20" x2="-90" y2="-20" stroke="#999" transform="rotate(-10)"/>
+    <line x1="-150" y1="0" x2="-90" y2="0" stroke="#999" transform="rotate(-10)"/>
+    <line x1="-150" y1="20" x2="-90" y2="20" stroke="#999" transform="rotate(-10)"/>
+    
+    <!-- Breakfast plate -->
+    <circle cx="120" cy="-20" r="40" fill="#fff"/>
+    <circle cx="120" cy="-20" r="35" fill="#ffd6b3"/>
+    
+    <!-- Croissant -->
+    <path d="M100,-40 Q120,-50 140,-40 Q130,-20 140,0 Q120,-10 100,0 Q110,-20 100,-40" fill="#f9cb9c"/>
+    
+    <!-- Glass of orange juice -->
+    <rect x="170" y="-50" width="20" height="40" fill="#ffcc00"/>
+    <rect x="165" y="-55" width="30" height="5" fill="#ddd"/>
+  </g>
+  
+  <!-- Text represents online learning -->
+  <text x="50" y="50" font-family="Arial" font-size="24" fill="#333">Online Learning</text>
+</svg> 
