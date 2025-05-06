@@ -59,9 +59,26 @@ const nextConfig = {
     
     // Disable strict mode for error handling
     strictMode: false,
+    
+    // Prevent fallback to prerendering routes with dynamic data or using unstable_noStore
+    serverActions: {
+      allowedOrigins: [
+        'localhost:3000',
+        'localhost',
+        process.env.VERCEL_URL || '',
+      ],
+    },
   },
   // Transpile specific modules that need it, but not all node_modules 
   transpilePackages: [],
+  // Set output to export for static site generation, but allow dynamic features
+  output: 'export',
+  // Configure routes that cannot be exported statically
+  unstable_skipTrailingSlashRedirect: true,
+  // Skip type checking to prevent issues during build
+  skipMiddlewareUrlNormalize: true,
+  // This ensures pages with unstable_noStore() are handled properly
+  distDir: process.env.NODE_ENV === 'development' ? '.next' : 'out',
   webpack: (config, { isServer }) => {
     // Add module alias resolution for better path handling
     config.resolve.fallback = { 

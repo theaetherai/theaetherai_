@@ -17,5 +17,21 @@
       "memory": 1024,
       "maxDuration": 60
     }
-  }
+  },
+  "routes": [
+    {
+      "src": "/api/.*",
+      "dest": "/_next/server/app/api/$1"
+    },
+    {
+      "src": "/home",
+      "dest": "/home.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "buildCommand": "node --stack-size=4000 ./node_modules/.bin/next build",
+  "outputDirectory": "out"
 }

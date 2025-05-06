@@ -33,9 +33,11 @@ export const sendEmail = async (
   return { transporter, mailOptions }
 }
 
-export const onAuthenticateUser = async () => {
-  // Prevent caching to avoid headers issues
-  noStore();
+export const onAuthenticateUser = async (enableDynamicMode = false) => {
+  // Only prevent caching if explicitly enabled
+  if (enableDynamicMode) {
+    noStore();
+  }
   
   try {
     const user = await currentUser()
@@ -107,9 +109,11 @@ export const onAuthenticateUser = async () => {
   }
 }
 
-export const getNotifications = async () => {
-  // Prevent caching to avoid headers issues
-  noStore();
+export const getNotifications = async (enableDynamicMode = false) => {
+  // Prevent caching only if explicitly enabled
+  if (enableDynamicMode) {
+    noStore();
+  }
   
   try {
     const user = await currentUser()

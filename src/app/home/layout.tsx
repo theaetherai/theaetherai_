@@ -16,22 +16,23 @@ const HomeLayout = async ({ children }: Props) => {
 
   try {
     // Try to authenticate user but don't force redirect
-    const auth = await onAuthenticateUser()
+    // Pass false to disable dynamic mode and allow static generation
+    const auth = await onAuthenticateUser(false)
     
     // Only prefetch data if user is authenticated
     if (auth.status === 200 || auth.status === 201) {
       if (auth.user?.workspace && auth.user.workspace.length > 0) {
-        // Prefetch workspace data
-  await query.prefetchQuery({
-    queryKey: ['user-workspaces'],
-    queryFn: () => getWorkSpaces(),
-  })
+        // Prefetch workspace data - with dynamic mode disabled
+        await query.prefetchQuery({
+          queryKey: ['user-workspaces'],
+          queryFn: () => getWorkSpaces(false),
+        })
 
-        // Prefetch notifications
-  await query.prefetchQuery({
-    queryKey: ['user-notifications'],
-    queryFn: () => getNotifications(),
-  })
+        // Prefetch notifications - with dynamic mode disabled
+        await query.prefetchQuery({
+          queryKey: ['user-notifications'],
+          queryFn: () => getNotifications(false),
+        })
       }
     }
   } catch (error) {

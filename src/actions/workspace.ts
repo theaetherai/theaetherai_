@@ -7,6 +7,7 @@ import { createClient, OAuthStrategy } from '@wix/sdk'
 import { items } from '@wix/data'
 import axios from 'axios'
 import { OpenAI } from 'openai'
+import { unstable_noStore as noStore } from 'next/cache'
 
 export const verifyAccessToWorkspace = async (workspaceId: string) => {
   try {
@@ -132,7 +133,12 @@ export const getAllUserVideos = async (workSpaceId: string) => {
   }
 }
 
-export const getWorkSpaces = async () => {
+export const getWorkSpaces = async (enableDynamicMode = false) => {
+  // Prevent caching only if explicitly enabled
+  if (enableDynamicMode) {
+    noStore();
+  }
+
   try {
     const user = await currentUser()
 
