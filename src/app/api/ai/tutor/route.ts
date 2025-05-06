@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
 import OpenAI from "openai";
+import { client } from "../../../../lib/prisma"; // Use the shared client instance
 
 // ----- Separate all the heavy logic into isolated functions to prevent circular dependencies -----
-
-// Create a minimal Prisma client - using the simplest possible approach
-const prisma = new PrismaClient();
 
 // Initialize OpenAI in a separate function to avoid potential circular dependencies
 function getOpenAIClient() {
@@ -102,18 +100,26 @@ function buildSystemPrompt(context: string, instructions?: string, rubric?: any[
 
 // Main API handler - kept as minimal as possible
 export async function POST(req: Request) {
+  // Check authentication early - use proper auth() first
+  const { userId } = auth();
+  
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    // Get user information
+    // Get user information only when needed
     const user = await currentUser();
-    if (!user?.id) {
-      return new Response("Unauthorized", { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
     
     // Parse request body with minimal error handling
-    const { prompt, context = "general", instructions, rubric } = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({}));
+    const { prompt, context = "general", instructions, rubric } = body;
     
     if (!prompt) {
-      return new Response("Prompt is required", { status: 400 });
+      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
     
     // Generate AI response with minimal logic
@@ -140,7 +146,7 @@ export async function POST(req: Request) {
       
       // Log interaction with minimal fields
       try {
-        await prisma.aiTutorInteraction.create({
+        await client.aiTutorInteraction.create({
           data: {
             userId: user.id,
             prompt: prompt.substring(0, 1000), // Limit length to avoid issues
@@ -157,6 +163,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ response });
       
     } catch (aiError: any) {
+      console.error("AI Error:", aiError);
       // Handle AI errors with minimal processing
       return NextResponse.json({ 
         error: "AI processing error"
@@ -164,12 +171,10 @@ export async function POST(req: Request) {
     }
     
   } catch (error: any) {
+    console.error("Server Error:", error);
     // Minimal error handling
     return NextResponse.json({ 
       error: "Server error"
     }, { status: 500 });
-  } finally {
-    // Always disconnect
-    await prisma.$disconnect().catch(() => {});
   }
 } 
