@@ -243,6 +243,83 @@ We encountered and fixed a "Maximum call stack size exceeded" error in the `/api
 
 This pattern of replacing direct imports with API calls can be applied to other routes experiencing similar stack size issues.
 
+### 9. Addressing Stack Size Errors in API Route Handlers
+
+We encountered a second stack size error in our newly created `/api/videos/[id]/process` route. This highlights an important lesson: **even when fixing one circular dependency, we may inadvertently create another**.
+
+The solution involved:
+
+1. **Extreme Minimalism**: Strip API routes down to their absolute essentials
+   - Remove all unnecessary imports
+   - Remove all heavy processing logic from the API route itself
+   - Use only the most basic database operations
+
+2. **Breaking Synchronous Execution Chains**: 
+   - Move processing to asynchronous background tasks
+   - Use techniques like setTimeout or fetch() to background processes
+   - Replace direct function calls with message-passing patterns
+
+3. **Simplified Implementation Example**:
+   ```js
+   // BEFORE - Heavy processing in API route
+   export async function POST(request, { params }) {
+     // Direct imports of heavy processing libraries
+     // Complex video processing logic inside the API route
+     // Many nested dependencies creating potential circular issues
+   }
+   
+   // AFTER - Minimal API route with background processing
+   export async function POST(request, { params }) {
+     // Update status in database
+     await prisma.video.update({
+       where: { id: params.id },
+       data: { processing: true }
+     });
+     
+     // Trigger processing via message or API call
+     // Do not await the processing
+     fetch(`/api/videos/${params.id}/status`, {
+       method: 'POST',
+       body: JSON.stringify({ action: 'start-processing' })
+     }).catch(err => console.error(err));
+     
+     return NextResponse.json({ status: 'Processing initiated' });
+   }
+   ```
+
+This approach completely decouples the API route handler from the actual processing logic, breaking any circular dependencies that might occur during Vercel's build process.
+
+### 10. Using Dynamic Imports for Background Processing
+
+For video processing and other heavy computational tasks, we implemented a pattern using dynamic imports that helps prevent build-time circular dependencies:
+
+1. **Move Processing Logic to a Separate Worker Module**:
+   - Create a dedicated worker file (e.g., `src/lib/video-worker.ts`)
+   - Implement all heavy processing logic in this file
+   - Ensure this module doesn't import from API routes
+
+2. **Use Dynamic Imports in API Routes**:
+   ```js
+   // Static imports would create circular dependencies at build time
+   // import { processVideo } from '../../../../lib/video-processing';
+   
+   // Instead, use dynamic imports at runtime
+   import('../../../../../lib/video-worker').then(({ processVideoInBackground }) => {
+     // Fire and forget - don't await
+     processVideoInBackground(videoId, url).catch((err) => {
+       console.error(`Background processing error:`, err);
+     });
+   });
+   ```
+
+3. **Benefits of This Pattern**:
+   - Circular dependencies are prevented at build time
+   - Processing logic remains properly organized in dedicated files
+   - Background tasks can run without blocking or erroring API routes
+   - The application can be built successfully on Vercel
+
+This approach is especially useful for Node.js serverless functions where you need to do heavy processing but want to avoid circular dependencies and stack size limitations.
+
 ## Prevention Strategies
 
 To prevent stack size issues in the future:
