@@ -6,9 +6,9 @@ import {
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query'
-import Sidebar from '@/components/global/sidebar'
-import { Toaster } from '@/components/ui/toaster'
-import ErrorBoundary from '@/components/global/error-boundary'
+import Sidebar from '../../../components/global/sidebar'
+import { Toaster } from '../../../components/ui/toaster'
+import ErrorBoundary from '../../../components/global/error-boundary'
 
 // Define workspace interface to match what's used in GlobalHeader
 interface WorkspaceType {

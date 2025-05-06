@@ -33,6 +33,21 @@ const nextConfig = {
     // Add JWT leeway to handle clock skew issues (in seconds)
     CLERK_JWT_LEEWAY: '60',
   },
+  // Ensure compilation includes proper paths
+  experimental: {
+    esmExternals: 'loose',
+    // Enable output file tracing for easier debugging
+    outputFileTracingRoot: process.cwd(),
+  },
+  webpack: (config) => {
+    // Add module alias resolution for better path handling
+    config.resolve.fallback = { 
+      ...config.resolve.fallback,
+      fs: false,
+    };
+
+    return config;
+  },
 }
 
 module.exports = nextConfig 
