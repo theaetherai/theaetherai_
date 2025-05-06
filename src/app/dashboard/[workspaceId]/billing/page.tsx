@@ -1,4 +1,4 @@
-import { getPaymentInfo } from '@/actions/user'
+import { getPaymentInfo } from '../../../../actions/user'
 import React from 'react'
 
 type Props = {}

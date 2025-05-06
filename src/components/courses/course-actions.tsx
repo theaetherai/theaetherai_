@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import { BookPlus, Edit, Trash2, UserPlus, Users } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'

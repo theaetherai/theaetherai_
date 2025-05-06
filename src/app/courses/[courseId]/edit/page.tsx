@@ -1,8 +1,8 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect, notFound } from 'next/navigation'
-import CourseEditor from '@/components/courses/course-editor'
-import { client } from '@/lib/prisma'
-import { Course } from '@/types/course'
+import CourseEditor from '../../../../components/courses/course-editor'
+import { client } from '../../../../lib/prisma'
+import { Course } from '../../../../types/course'
 
 interface EditCoursePageProps {
   params: {

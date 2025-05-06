@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Textarea } from '../../components/ui/textarea';
 import { 
   Select, 
   SelectContent, 
@@ -11,9 +11,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Checkbox } from '../../components/ui/checkbox';
+import { Label } from '../../components/ui/label';
 import { 
   Grip, 
   Plus, 
@@ -26,8 +26,8 @@ import {
   FileQuestion,
   Check
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
+import { cn } from '../../lib/utils';
+import { Switch } from '../../components/ui/switch';
 
 interface QuestionOption {
   text: string;

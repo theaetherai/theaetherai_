@@ -1,7 +1,7 @@
 'use client'
 
-import { Links } from '@/components/icons'
-import { Button } from '@/components/ui/button'
+import { Links } from '../../../components/icons'
+import { Button } from '../../../components/ui/button'
 import React from 'react'
 import { toast } from 'sonner'
 

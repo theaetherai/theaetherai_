@@ -2,14 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Video, Subtitles, TextSelect, ExternalLink, Clock, Volume2, VolumeX, FileQuestion, Loader2, ChevronLeft, MessageSquare, Bot, ListChecks, BookOpen, Brain, Send, RotateCcw, ChevronRight, Home, Layers } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import { Separator } from '../../../components/ui/separator';
+import { Button } from '../../../components/ui/button';
+import { Progress } from '../../../components/ui/progress';
+import { Label } from '../../../components/ui/label';
+import { Switch } from '../../../components/ui/switch';
+import { Badge } from '../../../components/ui/badge';
+import { cn } from '../../../lib/utils';
 import axios from 'axios';
 import { toast } from 'sonner';
 import {
@@ -21,7 +21,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '../../../components/ui/textarea';
 import Link from 'next/link';
 import LessonNavigation from './LessonNavigation';
 

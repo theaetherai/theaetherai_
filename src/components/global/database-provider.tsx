@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AlertTriangle, Database, RotateCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '../../components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert';
 
 interface DatabaseContextProps {
   isConnected: boolean;

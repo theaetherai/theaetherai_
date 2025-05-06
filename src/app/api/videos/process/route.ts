@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { client } from '@/lib/prisma';
+import { client } from '../../../../lib/prisma';
 import { OpenAI } from 'openai';
 import axios from 'axios';
 import * as fs from 'fs';

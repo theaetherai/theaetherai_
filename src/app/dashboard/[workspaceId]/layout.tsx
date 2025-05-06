@@ -1,5 +1,5 @@
 import React from 'react'
-import { getNotifications, onAuthenticateUser } from '@/actions/user'
+import { getNotifications, onAuthenticateUser } from '../../../actions/user'
 import {
   getAllUserVideos,
   getWorkspaceFolders,
@@ -7,7 +7,7 @@ import {
   verifyAccessToWorkspace,
 } from '@/actions/workspace'
 import { redirect } from 'next/navigation'
-import { Toaster } from '@/components/ui/toaster'
+import { Toaster } from '../../../components/ui/toaster'
 import ClientWorkspaceLayout from './client-workspace-layout'
 import EnhancedLayout from './enhanced-layout'
 import { cookies } from 'next/headers'

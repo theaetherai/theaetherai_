@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Clock, BookOpen, Copy, Check, Share2, Bookmark, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '../../../components/ui/button';
+import { Progress } from '../../../components/ui/progress';
+import { Badge } from '../../../components/ui/badge';
+import { Separator } from '../../../components/ui/separator';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { cn } from '@/lib/utils';
+import { cn } from '../../../lib/utils';
 import LessonNavigation from './LessonNavigation';
 import { useRouter } from 'next/navigation';
 

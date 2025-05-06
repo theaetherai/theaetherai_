@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import { Shield, ShieldAlert } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '../../components/ui/use-toast'
 
 export default function AuthModeToggle() {
   const [currentMode, setCurrentMode] = useState<string>('standard')

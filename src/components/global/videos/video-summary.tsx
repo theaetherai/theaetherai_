@@ -1,10 +1,10 @@
 'use client'
 
-import { TabsContent } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
+import { TabsContent } from '../../../components/ui/tabs'
+import { Button } from '../../../components/ui/button'
 import React, { useState } from 'react'
 import { SparklesIcon } from 'lucide-react'
-import { generateVideoSummary } from '@/actions/workspace'
+import { generateVideoSummary } from '../../../actions/workspace'
 
 type Props = {
   description: string | null

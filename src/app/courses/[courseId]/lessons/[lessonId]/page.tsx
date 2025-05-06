@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { client } from "@/lib/prisma";
-import { safeCurrentUser, hasUserSession } from "@/lib/safe-auth";
-import LessonView from "@/components/courses/lesson-view";
+import { client } from "../../../../../lib/prisma";
+import { safeCurrentUser, hasUserSession } from "../../../../../lib/safe-auth";
+import LessonView from "../../../../../components/courses/lesson-view";
 
 interface LessonPageProps {
   params: {

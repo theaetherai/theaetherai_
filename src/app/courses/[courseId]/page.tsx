@@ -1,25 +1,25 @@
-import { onAuthenticateUser } from '@/actions/user'
+import { onAuthenticateUser } from '../../../actions/user'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { client } from '@/lib/prisma'
-import { safeCourseAccess } from '@/lib/safe-auth'
+import { client } from '../../../lib/prisma'
+import { safeCourseAccess } from '../../../lib/safe-auth'
 import React from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { ArrowLeft, BookPlus, ChevronRight, Edit, Trash2, UserPlus, UserCheck, BookOpen, Clock, Globe, User } from 'lucide-react'
-import SectionList from '@/components/courses/section-list'
+import SectionList from '../../../components/courses/section-list'
 import { formatDistanceToNow } from 'date-fns'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent } from '../../../components/ui/card'
 import { Suspense } from 'react'
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query'
-import Breadcrumb from '@/components/breadcrumb'
+import Breadcrumb from '../../../components/breadcrumb'
 import Image from 'next/image'
-import LessonGrid from '@/components/courses/lesson-grid'
-import { cleanCloudinaryUrl } from '@/lib/utils'
+import LessonGrid from '../../../components/courses/lesson-grid'
+import { cleanCloudinaryUrl } from '../../../lib/utils'
 import { Lesson as PrismaLesson, Section as PrismaSection } from '@prisma/client'
 
 interface CoursePageProps {

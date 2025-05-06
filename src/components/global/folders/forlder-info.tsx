@@ -1,8 +1,8 @@
 'use client'
-import { getFolderInfo } from '@/actions/workspace'
-import { useQueryData } from '@/hooks/useQueryData'
+import { getFolderInfo } from '../../../actions/workspace'
+import { useQueryData } from '../../../hooks/useQueryData'
 import React from 'react'
-import { FolderProps } from '@/types/index.type'
+import { FolderProps } from '../../../types/index.type'
 
 type Props = {
   folderId: string

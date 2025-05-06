@@ -1,6 +1,6 @@
-import { client } from '@/lib/prisma';
+import { client } from '../../../../lib/prisma';
 import { NextResponse } from 'next/server';
-import { processVideo } from '@/lib/video-processing'; // We'll create this helper function
+import { processVideo } from '../../../../lib/video-processing'; // We'll create this helper function
 
 export async function POST(request: Request) {
   try {

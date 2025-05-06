@@ -1,15 +1,15 @@
 'use client'
-import FolderDuotone from '@/components/icons/folder-duotone'
-import { cn } from '@/lib/utils'
+import FolderDuotone from '../../../components/icons/folder-duotone'
+import { cn } from '../../../lib/utils'
 import { ArrowRight } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import Folder from './folder'
-import { useQueryData } from '@/hooks/useQueryData'
-import { getWorkspaceFolders } from '@/actions/workspace'
-import { useMutationDataState } from '@/hooks/useMutationData'
+import { useQueryData } from '../../../hooks/useQueryData'
+import { getWorkspaceFolders } from '../../../actions/workspace'
+import { useMutationDataState } from '../../../hooks/useMutationData'
 import Videos from '../videos'
 import { useDispatch } from 'react-redux'
-import { FOLDERS } from '@/redux/slices/folders'
+import { FOLDERS } from '../../../redux/slices/folders'
 
 type Props = {
   workspaceId: string

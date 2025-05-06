@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight, Home, Layers } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../../components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 

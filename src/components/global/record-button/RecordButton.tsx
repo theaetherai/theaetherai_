@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../../components/ui/button';
 import { VideoIcon, StopCircleIcon, LoaderIcon } from 'lucide-react';
 import { 
   Tooltip,
@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '../../../lib/utils';
 
 interface RecordButtonProps {
   isRecording: boolean;

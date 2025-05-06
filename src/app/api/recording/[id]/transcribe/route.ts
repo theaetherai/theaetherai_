@@ -1,4 +1,4 @@
-import { client } from '@/lib/prisma'
+import { client } from '../../../../../lib/prisma'
 import axios from 'axios'
 import { NextRequest, NextResponse } from 'next/server'
 

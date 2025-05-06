@@ -1,11 +1,11 @@
-import { client } from '@/lib/prisma'
+import { client } from '../../lib/prisma'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React from 'react'
-import ChatInterface from '@/components/ai-tutor/chat-interface'
+import ChatInterface from '../../components/ai-tutor/chat-interface'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 
 export default async function AiTutorPage({
   searchParams,

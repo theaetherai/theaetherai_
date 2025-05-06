@@ -8,7 +8,7 @@ import { useAuth } from '@clerk/nextjs'
 import { useState, useEffect } from 'react'
 import { UserButton } from '@clerk/nextjs'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +16,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
-import { getWorkSpaces } from '@/actions/workspace'
+import { Input } from '../../components/ui/input'
+import { useCurrentUser } from '../../hooks/useCurrentUser'
+import { getWorkSpaces } from '../../actions/workspace'
 
 // Define interfaces for the workspace data structure
 interface Workspace {

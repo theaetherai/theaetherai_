@@ -1,9 +1,9 @@
 import React from 'react'
-import { getNotifications } from '@/actions/user'
-import { getWorkSpaces, verifyAccessToWorkspace } from '@/actions/workspace'
+import { getNotifications } from '../../../actions/user'
+import { getWorkSpaces, verifyAccessToWorkspace } from '../../../actions/workspace'
 import ClientWorkspaceLayout from './client-workspace-layout'
-import { logAuthError } from '@/lib/auth-resilience'
-import { SocketProvider } from '@/components/global/socket-provider'
+import { logAuthError } from '../../../lib/auth-resilience'
+import { SocketProvider } from '../../../components/global/socket-provider'
 
 // Interface for the workspaceId parameter
 interface WorkspaceParams {

@@ -1,18 +1,18 @@
 'use client'
 
-import { onAuthenticateUser } from '@/actions/user'
+import { onAuthenticateUser } from '../../../../actions/user'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { client } from '@/lib/prisma'
+import { client } from '../../../../lib/prisma'
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/table"
+import { Button } from "../../../../components/ui/button"
 import { useRouter } from 'next/navigation'
 import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { Badge } from "../../../../components/ui/badge"
+import { Input } from "../../../../components/ui/input"
 import { Search, ShieldCheck, User, UserCheck, UserCog } from "lucide-react"
 
 interface Props {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Spinner } from './spinner'
-import { cn } from '@/lib/utils'
+import { cn } from '../../../lib/utils'
 
 type Props = {
   state: boolean

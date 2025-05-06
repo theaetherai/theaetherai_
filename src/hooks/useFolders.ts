@@ -1,9 +1,9 @@
-import { useAppSelector } from '@/redux/store'
+import { useAppSelector } from '../redux/store'
 import { useEffect, useState } from 'react'
 import { useMutationData } from './useMutationData'
-import { getWorkspaceFolders, moveVideoLocation } from '@/actions/workspace'
+import { getWorkspaceFolders, moveVideoLocation } from '../actions/workspace'
 import useZodForm from './useZodForm'
-import { moveVideoSchema } from '@/components/forms/change-video-location/schema'
+import { moveVideoSchema } from '../components/forms/change-video-location/schema'
 
 export const useMoveVideos = (videoId: string, currentWorkspace: string) => {
   //get state redux

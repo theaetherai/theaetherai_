@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { useParams } from 'next/navigation'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
-import VideoUploader from '@/components/global/videos/VideoUploader'
-import { Separator } from '@/components/ui/separator'
+import { useCurrentUser } from '../../../../hooks/useCurrentUser'
+import VideoUploader from '../../../../components/global/videos/VideoUploader'
+import { Separator } from '../../../../components/ui/separator'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 

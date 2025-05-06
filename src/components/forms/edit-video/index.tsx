@@ -1,7 +1,7 @@
-import FormGenerator from '@/components/global/form-generator'
-import Loader from '@/components/global/loader'
-import { Button } from '@/components/ui/button'
-import { useEditVideo } from '@/hooks/useEditVideo'
+import FormGenerator from '../../../components/global/form-generator'
+import Loader from '../../../components/global/loader'
+import { Button } from '../../../components/ui/button'
+import { useEditVideo } from '../../../hooks/useEditVideo'
 import React from 'react'
 
 type Props = {

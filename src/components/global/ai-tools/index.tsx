@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { TabsContent } from '@/components/ui/tabs'
+import { Button } from '../../../components/ui/button'
+import { TabsContent } from '../../../components/ui/tabs'
 import React from 'react'
 import Loader from '../loader'
 

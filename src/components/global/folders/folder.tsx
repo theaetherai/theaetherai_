@@ -1,12 +1,12 @@
 'use client'
-import { cn } from '@/lib/utils'
+import { cn } from '../../../lib/utils'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import Loader from '../loader'
-import FolderDuotone from '@/components/icons/folder-duotone'
-import { useMutationData, useMutationDataState } from '@/hooks/useMutationData'
-import { renameFolders } from '@/actions/workspace'
-import { Input } from '@/components/ui/input'
+import FolderDuotone from '../../../components/icons/folder-duotone'
+import { useMutationData, useMutationDataState } from '../../../hooks/useMutationData'
+import { renameFolders } from '../../../actions/workspace'
+import { Input } from '../../../components/ui/input'
 
 type Props = {
   name: string

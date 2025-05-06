@@ -1,6 +1,6 @@
 'use server'
 
-import { client } from '@/lib/prisma'
+import { client } from '../lib/prisma'
 import { currentUser, type User as ClerkUser } from '@clerk/nextjs/server'
 import nodemailer from 'nodemailer'
 import Stripe from 'stripe'

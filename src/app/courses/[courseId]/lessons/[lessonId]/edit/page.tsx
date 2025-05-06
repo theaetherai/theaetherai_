@@ -1,12 +1,12 @@
-import { onAuthenticateUser } from '@/actions/user'
+import { onAuthenticateUser } from '../../../../../../actions/user'
 import { redirect } from 'next/navigation'
-import { client } from '@/lib/prisma'
-import { safeCourseAccess } from '@/lib/safe-auth'
+import { client } from '../../../../../../lib/prisma'
+import { safeCourseAccess } from '../../../../../../lib/safe-auth'
 import React from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import LessonForm from '@/components/courses/lesson-form'
+import { Button } from '../../../../../../components/ui/button'
+import LessonForm from '../../../../../../components/courses/lesson-form'
 
 interface EditLessonPageProps {
   params: {

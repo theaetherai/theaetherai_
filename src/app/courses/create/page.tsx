@@ -1,6 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import CourseEditor from '@/components/courses/course-editor'
+import CourseEditor from '../../../components/courses/course-editor'
 
 export default async function CreateCoursePage() {
   const user = await currentUser()

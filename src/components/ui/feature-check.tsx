@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, ReactNode } from 'react'
-import { checkIfRouteExists } from '@/hooks/useRouteAvailability'
+import { checkIfRouteExists } from '../../hooks/useRouteAvailability'
 
 interface FeatureCheckProps {
   /**

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Modal from '../modal'
 import { AlertTriangle, Move, MoreVertical, Trash } from 'lucide-react'
-import ChangeVideoLocation from '@/components/forms/change-video-location'
-import { Button } from '@/components/ui/button'
+import ChangeVideoLocation from '../../../components/forms/change-video-location'
+import { Button } from '../../../components/ui/button'
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '../../../components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 

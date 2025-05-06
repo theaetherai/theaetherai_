@@ -1,14 +1,14 @@
 'use client'
-import { getAllUserVideos } from '@/actions/workspace'
-import VideoRecorderDuotone from '@/components/icons/video-recorder-duotone'
-import { useQueryData } from '@/hooks/useQueryData'
-import { cn } from '@/lib/utils'
-import { VideosProps } from '@/types/index.type'
+import { getAllUserVideos } from '../../../actions/workspace'
+import VideoRecorderDuotone from '../../../components/icons/video-recorder-duotone'
+import { useQueryData } from '../../../hooks/useQueryData'
+import { cn } from '../../../lib/utils'
+import { VideosProps } from '../../../types/index.type'
 import React, { useEffect } from 'react'
 import VideoCard from './video-card'
-import { useMutationDataState } from '@/hooks/useMutationData'
+import { useMutationDataState } from '../../../hooks/useMutationData'
 import { RefreshCcw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 
 type Props = {
   folderId: string

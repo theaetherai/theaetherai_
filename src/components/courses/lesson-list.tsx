@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { LessonProps } from '@/types/index.type'
+import { Button } from '../../components/ui/button'
+import { LessonProps } from '../../types/index.type'
 import { CheckCircle2, CircleDashed, Film, GripVertical, Pencil, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'

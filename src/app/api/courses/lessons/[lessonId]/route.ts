@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../../../lib/db";
 
 // GET - Fetch a specific lesson by ID
 export async function GET(

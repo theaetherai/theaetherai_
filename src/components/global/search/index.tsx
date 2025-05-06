@@ -1,14 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useMutationData } from '@/hooks/useMutationData'
-import { useSearch } from '@/hooks/useSearch'
+import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Skeleton } from '../../../components/ui/skeleton'
+import { useMutationData } from '../../../hooks/useMutationData'
+import { useSearch } from '../../../hooks/useSearch'
 import { User } from 'lucide-react'
 
 import React from 'react'
 import Loader from '../loader'
-import { inviteMembers } from '@/actions/user'
+import { inviteMembers } from '../../../actions/user'
 
 type Props = {
   workspaceId: string

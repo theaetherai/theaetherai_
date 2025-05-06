@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useSocket } from '@/components/global/socket-provider'
+import { useSocket } from '../components/global/socket-provider'
 
 interface TutorConnectionOptions {
   autoConnect?: boolean

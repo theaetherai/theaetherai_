@@ -1,6 +1,6 @@
 'use client'
-import { Button } from '@/components/ui/button'
-import { useCreateFolders } from '@/hooks/useCreateFolders'
+import { Button } from '../../../components/ui/button'
+import { useCreateFolders } from '../../../hooks/useCreateFolders'
 import React from 'react'
 import { Plus } from 'lucide-react'
 

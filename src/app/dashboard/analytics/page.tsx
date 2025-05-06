@@ -1,12 +1,12 @@
 import React from 'react'
-import { client } from '@/lib/prisma'
-import { onAuthenticateUser } from '@/actions/user'
+import { client } from '../../../lib/prisma'
+import { onAuthenticateUser } from '../../../actions/user'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { UsageChart } from '@/components/feedback/usage-chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs'
+import { DateRangePicker } from '../../../components/ui/date-range-picker'
+import { UsageChart } from '../../../components/feedback/usage-chart'
 
 export default async function AnalyticsDashboard() {
   // Authentication check

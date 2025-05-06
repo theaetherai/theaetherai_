@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '../../components/ui/badge'
 import { FileText, Play, Video, BookOpen, ClipboardEdit } from 'lucide-react'
 
 type Props = {

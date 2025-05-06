@@ -1,7 +1,7 @@
-import { HeroBanner } from '@/components/home/hero-banner'
-import { FeaturedCourses } from '@/components/home/featured-courses'
-import { WhyOpal } from '@/components/home/why-opal'
-import { Button } from '@/components/ui/button'
+import { HeroBanner } from '../../components/home/hero-banner'
+import { FeaturedCourses } from '../../components/home/featured-courses'
+import { WhyOpal } from '../../components/home/why-opal'
+import { Button } from '../../components/ui/button'
 import Link from 'next/link'
 
 // Mock data for development - replace with actual API calls in production

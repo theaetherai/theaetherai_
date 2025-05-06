@@ -9,14 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Button } from '../../../components/ui/button';
+import { Switch } from '../../../components/ui/switch';
+import { Label } from '../../../components/ui/label';
+import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 import { InfoCircledIcon, ExclamationTriangleIcon, CheckCircledIcon } from '@radix-ui/react-icons';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '../../../components/ui/separator';
 import { PermissionStatus } from './permissionHelpers';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
 import { Loader2 } from 'lucide-react';
 
 // Import helpers without using hooks directly

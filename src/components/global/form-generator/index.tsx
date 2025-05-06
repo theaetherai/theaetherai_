@@ -1,9 +1,9 @@
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Input } from '../../../components/ui/input'
+import { Label } from '../../../components/ui/label'
 import React from 'react'
 import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
-import { Textarea } from '@/components/ui/textarea'
+import { Textarea } from '../../../components/ui/textarea'
 
 type Props = {
   type?: 'text' | 'email' | 'password' | 'number'

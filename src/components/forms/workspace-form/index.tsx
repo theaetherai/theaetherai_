@@ -1,7 +1,7 @@
-import FormGenerator from '@/components/global/form-generator'
-import Loader from '@/components/global/loader'
-import { Button } from '@/components/ui/button'
-import { useCreateWorkspace } from '@/hooks/useCreateWorkspace'
+import FormGenerator from '../../../components/global/form-generator'
+import Loader from '../../../components/global/loader'
+import { Button } from '../../../components/ui/button'
+import { useCreateWorkspace } from '../../../hooks/useCreateWorkspace'
 import React from 'react'
 
 type Props = {}

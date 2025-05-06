@@ -8,8 +8,8 @@ import VideoLessonEditor from './VideoLessonEditor'
 import TextLessonEditor from './TextLessonEditor'
 import QuizLessonEditor from './QuizLessonEditor'
 import AssignmentLessonEditor from './AssignmentLessonEditor'
-import { LessonType } from '@/types/course'
-import { cn } from '@/lib/utils'
+import { LessonType } from '../../../types/course'
+import { cn } from '../../../lib/utils'
 
 interface LessonEditorSelectorProps {
   lessonId: string

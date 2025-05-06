@@ -1,4 +1,4 @@
-import { completeSubscription } from '@/actions/user'
+import { completeSubscription } from '../../actions/user'
 import { redirect } from 'next/navigation'
 import React from 'react'
 

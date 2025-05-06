@@ -5,9 +5,9 @@ import { useUser } from '@clerk/nextjs';
 import { RecordButton } from './RecordButton';
 import { RecordModal, RecordOptions } from './RecordModal';
 import { useRecording } from './useRecording';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { getUserProfile } from '@/actions/user';
+import { getUserProfile } from '../../../actions/user';
 
 interface RecordButtonContainerProps {
   workspaceId: string;

@@ -18,13 +18,13 @@ import {
   Lightbulb,
   FileText
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '../../../components/ui/button';
+import { Progress } from '../../../components/ui/progress';
+import { Badge } from '../../../components/ui/badge';
+import { Separator } from '../../../components/ui/separator';
+import { Textarea } from '../../../components/ui/textarea';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn } from '../../../lib/utils';
 import { 
   Card, 
   CardContent, 
@@ -48,7 +48,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import axios from 'axios';
-import { validateFile, validateFiles } from '@/lib/file-validation';
+import { validateFile, validateFiles } from '../../../lib/file-validation';
 import LessonNavigation from './LessonNavigation';
 
 interface RubricItem {

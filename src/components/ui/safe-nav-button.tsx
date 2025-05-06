@@ -1,9 +1,9 @@
 'use client'
 
-import { Button, ButtonProps } from '@/components/ui/button'
+import { Button, ButtonProps } from '../../components/ui/button'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
-import { useRouteAvailability } from '@/hooks/useRouteAvailability'
+import { useRouteAvailability } from '../../hooks/useRouteAvailability'
 
 interface SafeNavButtonProps extends ButtonProps {
   href: string

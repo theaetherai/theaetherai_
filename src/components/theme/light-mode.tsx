@@ -1,5 +1,5 @@
 import React from 'react'
-import { ThemeConfig } from "@/types";
+import { ThemeConfig } from "../../types";
 
 export const LightMode = () => {
   return (

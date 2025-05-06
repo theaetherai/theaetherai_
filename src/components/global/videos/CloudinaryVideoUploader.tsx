@@ -3,11 +3,11 @@
 import { useState, useRef } from 'react'
 import { Camera, UploadCloud, Loader2 } from 'lucide-react'
 import axios from 'axios'
-import { useToast } from '@/components/ui/use-toast'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useToast } from '../../../components/ui/use-toast'
+import { Button } from '../../../components/ui/button'
+import { Progress } from '../../../components/ui/progress'
+import { Alert, AlertDescription } from '../../../components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs'
 
 interface CloudinaryVideoUploaderProps {
   userId: string

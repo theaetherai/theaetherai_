@@ -8,14 +8,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Draggable } from 'react-beautiful-dnd'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 
 interface Lesson {
   id: string

@@ -1,9 +1,9 @@
-import Loader from '@/components/global/loader'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useMoveVideos } from '@/hooks/useFolders'
+import Loader from '../../../components/global/loader'
+import { Button } from '../../../components/ui/button'
+import { Label } from '../../../components/ui/label'
+import { Separator } from '../../../components/ui/separator'
+import { Skeleton } from '../../../components/ui/skeleton'
+import { useMoveVideos } from '../../../hooks/useFolders'
 import React from 'react'
 
 type Props = {

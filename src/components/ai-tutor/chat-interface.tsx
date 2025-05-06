@@ -2,15 +2,15 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { SendIcon, Loader2, ArrowLeft, ExternalLink } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card } from '@/components/ui/card'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { ScrollArea } from '../../components/ui/scroll-area'
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar'
+import { Card } from '../../components/ui/card'
 import { toast } from 'sonner'
 import axios from 'axios'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 
 type Message = {
   id: string

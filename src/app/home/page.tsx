@@ -1,16 +1,16 @@
-import { onAuthenticateUser } from '@/actions/user'
+import { onAuthenticateUser } from '../../actions/user'
 import { currentUser } from '@clerk/nextjs/server'
-import { client } from '@/lib/prisma'
+import { client } from '../../lib/prisma'
 import React from 'react'
-import CourseSearch from '@/components/courses/course-search'
-import CourseGrid from '@/components/courses/course-grid'
+import CourseSearch from '../../components/courses/course-search'
+import CourseGrid from '../../components/courses/course-grid'
 import { Suspense } from 'react'
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 
 interface HomePageProps {

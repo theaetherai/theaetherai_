@@ -7,8 +7,8 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd'
 
-import { Button } from '@/components/ui/button'
-import { Collapse } from '@/components/ui/collapse'
+import { Button } from '../../components/ui/button'
+import { Collapse } from '../../components/ui/collapse'
 import { LessonRow } from './lesson-row'
 import {
   Dialog,
@@ -18,9 +18,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { cn } from '../../lib/utils'
 
 interface Section {
   id: string

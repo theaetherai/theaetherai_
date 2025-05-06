@@ -1,24 +1,24 @@
-import { getNotifications } from '@/actions/user'
+import { getNotifications } from '../../../actions/user'
 import {
   getAllUserVideos,
   getWorkspaceFolders,
   getWorkSpaces,
 } from '@/actions/workspace'
-import CreateForlders from '@/components/global/create-folders'
-import CreateWorkspace from '@/components/global/create-workspace'
-import Folders from '@/components/global/folders'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import CreateForlders from '../../../components/global/create-folders'
+import CreateWorkspace from '../../../components/global/create-workspace'
+import Folders from '../../../components/global/folders'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs'
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import Link from 'next/link'
 import React from 'react'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert'
 import { RefreshCcw, UploadCloud } from 'lucide-react'
-import RecordButtonContainer from '@/components/global/record-button'
+import RecordButtonContainer from '../../../components/global/record-button'
 
 // This is a special interface for the workspaceId segment
 interface WorkspaceParams {

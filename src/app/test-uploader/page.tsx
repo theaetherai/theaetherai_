@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import CloudinaryVideoUploader from '@/components/global/videos/CloudinaryVideoUploader'
+import CloudinaryVideoUploader from '../../components/global/videos/CloudinaryVideoUploader'
 import { useUser } from '@clerk/nextjs'
-import { getUserProfile } from '@/actions/user'
+import { getUserProfile } from '../../actions/user'
 
 export default function TestUploaderPage() {
   const { user } = useUser()

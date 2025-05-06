@@ -1,8 +1,8 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
+import { Input } from '../../components/ui/input'
 import { Search, Filter, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useState, useTransition, useCallback } from 'react'
 import { 
@@ -13,9 +13,9 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group'
+import { Checkbox } from '../../components/ui/checkbox'
+import { Label } from '../../components/ui/label'
 
 export default function CourseSearch() {
   const router = useRouter()

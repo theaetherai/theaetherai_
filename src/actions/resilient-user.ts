@@ -1,5 +1,5 @@
-import { resilientCurrentUser, cacheUserSession, getCachedUserSession, logAuthError } from '@/lib/auth-resilience';
-import { client } from '@/lib/prisma';
+import { resilientCurrentUser, cacheUserSession, getCachedUserSession, logAuthError } from '../lib/auth-resilience';
+import { client } from '../lib/prisma';
 import { cookies } from 'next/headers';
 import { unstable_noStore as noStore } from 'next/cache';
 

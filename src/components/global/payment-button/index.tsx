@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import React from 'react'
 import Loader from '../loader'
-import { useSubscription } from '@/hooks/useSubscription'
+import { useSubscription } from '../../../hooks/useSubscription'
 
 type Props = {}
 

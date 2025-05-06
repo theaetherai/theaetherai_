@@ -6,10 +6,10 @@ import {
   Heading1, Heading2, Heading3, List, ListOrdered, Quote,
   Link, Image, Code, Undo, Redo
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Toggle } from '@/components/ui/toggle';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { Toggle } from '../../components/ui/toggle';
+import { Separator } from '../../components/ui/separator';
+import { cn } from '../../lib/utils';
 
 interface RichTextEditorProps {
   value: string;

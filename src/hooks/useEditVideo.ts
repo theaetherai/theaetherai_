@@ -1,7 +1,7 @@
-import { editVideoInfoSchema } from '@/components/forms/edit-video/schema'
+import { editVideoInfoSchema } from '../components/forms/edit-video/schema'
 import useZodForm from './useZodForm'
 import { useMutationData } from './useMutationData'
-import { editVideoInfo } from '@/actions/workspace'
+import { editVideoInfo } from '../actions/workspace'
 
 export const useEditVideo = (
   videoId: string,

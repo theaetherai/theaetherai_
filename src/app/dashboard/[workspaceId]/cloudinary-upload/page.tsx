@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import CloudinaryVideoUploader from '@/components/global/videos/CloudinaryVideoUploader'
+import CloudinaryVideoUploader from '../../../../components/global/videos/CloudinaryVideoUploader'
 import { useUser } from '@clerk/nextjs'
-import { getUserProfile } from '@/actions/user'
-import { Button } from '@/components/ui/button'
+import { getUserProfile } from '../../../../actions/user'
+import { Button } from '../../../../components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 

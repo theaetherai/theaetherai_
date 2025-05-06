@@ -1,9 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '../../components/ui/button'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form'
+import { Input } from '../../components/ui/input'
+import { Textarea } from '../../components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -12,8 +12,8 @@ import { z } from 'zod'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { Loader2, Search, Film, X, Clock, FileText, FileQuestion, ClipboardEdit } from 'lucide-react'
-import { Dialog, DialogContent, DialogTitle, DialogHeader } from '@/components/ui/dialog'
-import { getAllUserVideos } from '@/actions/workspace'
+import { Dialog, DialogContent, DialogTitle, DialogHeader } from '../../components/ui/dialog'
+import { getAllUserVideos } from '../../actions/workspace'
 import { useQuery } from '@tanstack/react-query'
 import {
   Select,
@@ -22,14 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Card, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
+import { Switch } from "../../components/ui/switch"
+import { Card, CardContent } from "../../components/ui/card"
+import { Label } from "../../components/ui/label"
 import LessonTypeSelector from './lesson-type-selector'
 import RichTextEditor from './rich-text-editor'
 import QuizBuilder from './quiz-builder'
 import AssignmentBuilder from './assignment-builder'
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 
 // Form validation schema
 const baseSchema = z.object({

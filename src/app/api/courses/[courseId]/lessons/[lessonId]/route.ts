@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/db"
+import { prisma } from "../../../../../../lib/db"
 import { currentUser } from "@clerk/nextjs/server"
 
 function isValidUUID(uuid: string | undefined) {

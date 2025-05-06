@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { RecordButton } from './RecordButton';
 import { RecordModal, RecordOptions } from './RecordModal';
 import { useRecording } from './useRecording';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
 interface ClientRecordingWrapperProps {

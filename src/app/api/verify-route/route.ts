@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { apiSuccess, apiError } from '@/lib/api-response'
+import { apiSuccess, apiError } from '../../../lib/api-response'
 import { auth } from '@clerk/nextjs/server'
-import { safeCourseAccess, hasUserSession } from '@/lib/safe-auth'
-import { client } from '@/lib/prisma'
+import { safeCourseAccess, hasUserSession } from '../../../lib/safe-auth'
+import { client } from '../../../lib/prisma'
 
 /**
  * Utility API endpoint to check if another API route exists

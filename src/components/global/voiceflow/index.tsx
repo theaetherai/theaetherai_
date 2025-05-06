@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect } from 'react'
-import { LoadVoiceFlowAgent } from '@/lib/voiceflow'
+import { LoadVoiceFlowAgent } from '../../../lib/voiceflow'
 
 type Props = {}
 

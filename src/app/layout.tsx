@@ -3,13 +3,13 @@ import { Inter, Montserrat } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 
 import './globals.css'
-import { ThemeProvider } from '@/components/theme'
-import ReactQueryProvider from '@/react-query'
-import { ReduxProvider } from '@/redux/provider'
+import { ThemeProvider } from '../components/theme'
+import ReactQueryProvider from '../react-query'
+import { ReduxProvider } from '../redux/provider'
 import { Toaster } from 'sonner'
-import { MainNav } from '@/components/navigation/main-nav'
-import ErrorBoundary from '@/components/global/error-boundary'
-import { DatabaseProvider } from '@/components/global/database-provider'
+import { MainNav } from '../components/navigation/main-nav'
+import ErrorBoundary from '../components/global/error-boundary'
+import { DatabaseProvider } from '../components/global/database-provider'
 
 // Load Montserrat for headings - a good alternative to Gilroy
 const montserrat = Montserrat({

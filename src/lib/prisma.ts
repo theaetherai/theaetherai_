@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { retry } from '@/lib/utils'
+import { retry } from '../lib/utils'
 
 // Create a singleton Prisma client instance
 const globalForPrisma = global as unknown as { 

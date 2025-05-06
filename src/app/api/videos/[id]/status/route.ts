@@ -1,6 +1,6 @@
-import { client } from '@/lib/prisma';
+import { client } from '../../../../../lib/prisma';
 import { NextResponse } from 'next/server';
-import { checkProcessingStatus } from '@/lib/video-processing';
+import { checkProcessingStatus } from '../../../../../lib/video-processing';
 
 export async function GET(
   request: Request,

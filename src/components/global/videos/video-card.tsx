@@ -2,12 +2,12 @@
 import React from 'react'
 import Loader from '../loader'
 import CardMenu from './video-card-menu'
-import ChangeVideoLocation from '@/components/forms/change-video-location'
+import ChangeVideoLocation from '../../../components/forms/change-video-location'
 import CopyLink from './copy-link'
 import Link from 'next/link'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar'
 import { Dot, Share2, User } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '../../../lib/utils'
 
 type Props = {
   User: {

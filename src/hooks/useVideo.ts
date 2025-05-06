@@ -1,8 +1,8 @@
-import { createCommentSchema } from '@/components/forms/comment-form/schema'
+import { createCommentSchema } from '../components/forms/comment-form/schema'
 import { useMutationData } from './useMutationData'
 import { useQueryData } from './useQueryData'
 import useZodForm from './useZodForm'
-import { createCommentAndReply, getUserProfile } from '@/actions/user'
+import { createCommentAndReply, getUserProfile } from '../actions/user'
 
 export const useVideoComment = (videoId: string, commentId?: string) => {
   const { data } = useQueryData(['user-profile'], getUserProfile)

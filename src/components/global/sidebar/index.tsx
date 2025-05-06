@@ -1,5 +1,5 @@
 'use client'
-import { getWorkSpaces } from '@/actions/workspace'
+import { getWorkSpaces } from '../../../actions/workspace'
 import {
   Select,
   SelectContent,
@@ -9,26 +9,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '../../../components/ui/separator'
 
-import { NotificationProps, WorkspaceProps } from '@/types/index.type'
+import { NotificationProps, WorkspaceProps } from '../../../types/index.type'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 import Modal from '../modal'
 import { Menu, PlusCircle } from 'lucide-react'
 import Search from '../search'
-import { MENU_ITEMS } from '@/constants'
+import { MENU_ITEMS } from '../../../constants'
 import SidebarItem from './sidebar-item'
-import { getNotifications } from '@/actions/user'
-import { useQueryData } from '@/hooks/useQueryData'
+import { getNotifications } from '../../../actions/user'
+import { useQueryData } from '../../../hooks/useQueryData'
 import WorkspacePlaceholder from './workspace-placeholder'
 import GlobalCard from '../global-card'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import Loader from '../loader'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from '../../../components/ui/sheet'
 import { useDispatch } from 'react-redux'
-import { WORKSPACES } from '@/redux/slices/workspaces'
+import { WORKSPACES } from '../../../redux/slices/workspaces'
 import PaymentButton from '../payment-button'
 type Props = {
   activeWorkspaceId: string

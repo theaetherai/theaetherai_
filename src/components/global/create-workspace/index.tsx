@@ -1,12 +1,12 @@
 'use client'
-import { getWorkSpaces } from '@/actions/workspace'
-import { WorkspaceProps } from '@/types/index.type'
+import { getWorkSpaces } from '../../../actions/workspace'
+import { WorkspaceProps } from '../../../types/index.type'
 import React from 'react'
 import Modal from '../modal'
-import { Button } from '@/components/ui/button'
-import { useQueryData } from '@/hooks/useQueryData'
-import FolderPlusDuotine from '@/components/icons/folder-plus-duotone'
-import WorkspaceForm from '@/components/forms/workspace-form'
+import { Button } from '../../../components/ui/button'
+import { useQueryData } from '../../../hooks/useQueryData'
+import FolderPlusDuotine from '../../../components/icons/folder-plus-duotone'
+import WorkspaceForm from '../../../components/forms/workspace-form'
 
 type Props = {}
 

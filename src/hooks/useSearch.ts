@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { searchUsers } from '@/actions/user'
+import { searchUsers } from '../actions/user'
 import { useQueryData } from './useQueryData'
 
 export const useSearch = (key: string, type: 'USERS') => {

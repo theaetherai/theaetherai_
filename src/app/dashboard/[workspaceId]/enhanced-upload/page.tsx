@@ -2,11 +2,11 @@
 
 import React from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { EnhancedVideoUploader } from '@/components/global/videos/enhanced'
-import { Separator } from '@/components/ui/separator'
+import { EnhancedVideoUploader } from '../../../../components/global/videos/enhanced'
+import { Separator } from '../../../../components/ui/separator'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from '../../../../components/ui/alert'
 
 /**
  * Enhanced Upload Page

@@ -1,6 +1,6 @@
-import { client } from '@/lib/prisma'
+import { client } from '../../../../lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
-import { AccessLevel, checkCourseAccess, handleUnauthorizedAccess } from '@/middleware/check-course-access'
+import { AccessLevel, checkCourseAccess, handleUnauthorizedAccess } from '../../../../middleware/check-course-access'
 
 // GET - Fetch a specific course with its lessons
 export async function GET(

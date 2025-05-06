@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { client } from '@/lib/prisma'
-import { onAuthenticateUser } from '@/actions/user'
+import { client } from '../../../lib/prisma'
+import { onAuthenticateUser } from '../../../actions/user'
 import { currentUser } from '@clerk/nextjs/server'
 
 // POST - Create a new feedback entry

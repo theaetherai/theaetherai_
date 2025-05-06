@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/button'
 import { AlertTriangle, Database, RotateCw } from 'lucide-react'
 import Link from 'next/link'
 import RefreshButton from './refresh-button'

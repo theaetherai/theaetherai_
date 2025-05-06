@@ -1,18 +1,18 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '../../components/ui/button'
+import { Card, CardContent, CardFooter } from '../../components/ui/card'
+import { Badge } from '../../components/ui/badge'
 import { BookOpen, Clock, User, UserCheck } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/ui/tooltip'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
 import StarRating from './star-rating'
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 
 // Function to check if a URL is valid
 const isValidUrl = (url: string): boolean => {

@@ -1,6 +1,6 @@
-import { getUserProfile, getVideoComments } from '@/actions/user'
-import { getPreviewVideo } from '@/actions/workspace'
-import VideoPreview from '@/components/global/videos/preview'
+import { getUserProfile, getVideoComments } from '../../../actions/user'
+import { getPreviewVideo } from '../../../actions/workspace'
+import VideoPreview from '../../../components/global/videos/preview'
 
 import {
   dehydrate,

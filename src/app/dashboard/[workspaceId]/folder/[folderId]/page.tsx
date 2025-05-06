@@ -1,6 +1,6 @@
-import { getAllUserVideos, getFolderInfo } from '@/actions/workspace'
-import FolderInfo from '@/components/global/folders/forlder-info'
-import Videos from '@/components/global/videos'
+import { getAllUserVideos, getFolderInfo } from '../../../../../actions/workspace'
+import FolderInfo from '../../../../../components/global/folders/forlder-info'
+import Videos from '../../../../../components/global/videos'
 import {
   dehydrate,
   HydrationBoundary,

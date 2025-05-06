@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '../../../components/ui/use-toast';
 import { RecordOptions } from './RecordModal';
 import { io, Socket } from 'socket.io-client';
 

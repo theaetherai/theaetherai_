@@ -2,7 +2,7 @@
 
 import { Lesson, Section } from '@prisma/client'
 import LessonVideoCard from './lesson-video-card'
-import { Progress } from '@/components/ui/progress'
+import { Progress } from '../../components/ui/progress'
 import { useState } from 'react'
 import { 
   Select, 

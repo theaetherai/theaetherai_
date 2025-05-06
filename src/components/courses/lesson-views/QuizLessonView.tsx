@@ -13,14 +13,14 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
+import { Progress } from '../../../components/ui/progress';
+import { Textarea } from '../../../components/ui/textarea';
+import { Label } from '../../../components/ui/label';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn } from '../../../lib/utils';
 import axios from 'axios';
 import { Dispatch, SetStateAction } from 'react';
 import LessonNavigation from './LessonNavigation';

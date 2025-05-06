@@ -1,11 +1,11 @@
 import React from 'react'
-import { onAuthenticateUser, getNotifications } from '@/actions/user'
+import { onAuthenticateUser, getNotifications } from '../../actions/user'
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
-import { getWorkSpaces } from '@/actions/workspace'
+import { getWorkSpaces } from '../../actions/workspace'
 
 type Props = {
   children: React.ReactNode

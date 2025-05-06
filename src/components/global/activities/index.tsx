@@ -1,11 +1,11 @@
 'use client'
-import CommentForm from '@/components/forms/comment-form'
-import { TabsContent } from '@/components/ui/tabs'
+import CommentForm from '../../../components/forms/comment-form'
+import { TabsContent } from '../../../components/ui/tabs'
 import React from 'react'
 import CommentCard from '../comment-card'
-import { useQueryData } from '@/hooks/useQueryData'
-import { getVideoComments } from '@/actions/user'
-import { VideoCommentProps } from '@/types/index.type'
+import { useQueryData } from '../../../hooks/useQueryData'
+import { getVideoComments } from '../../../actions/user'
+import { VideoCommentProps } from '../../../types/index.type'
 
 type Props = {
   author: string

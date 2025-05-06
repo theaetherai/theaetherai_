@@ -39,11 +39,22 @@ const nextConfig = {
     // Enable output file tracing for easier debugging
     outputFileTracingRoot: process.cwd(),
   },
-  webpack: (config) => {
+  // Transpile specific modules that need it, but not all node_modules 
+  transpilePackages: [],
+  webpack: (config, { isServer }) => {
     // Add module alias resolution for better path handling
     config.resolve.fallback = { 
       ...config.resolve.fallback,
       fs: false,
+    };
+    
+    // Improve module resolution
+    config.resolve.modules = ['node_modules', '.'];
+    
+    // Enhanced path aliases for better resolution
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').resolve(__dirname, './src'),
     };
 
     return config;

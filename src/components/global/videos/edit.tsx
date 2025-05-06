@@ -1,8 +1,8 @@
 import React from 'react'
 import Modal from '../modal'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { Edit } from 'lucide-react'
-import EditVideoForm from '@/components/forms/edit-video'
+import EditVideoForm from '../../../components/forms/edit-video'
 
 type Props = { title: string; description: string; videoId: string }
 
