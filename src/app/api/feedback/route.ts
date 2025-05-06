@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     // Get current user
     const user = await currentUser()
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json({ status: 401, message: 'Unauthorized' }, { status: 401 })
     }
 
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 
     // Get current user
     const user = await currentUser()
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json({ status: 401, message: 'Unauthorized' }, { status: 401 })
     }
 

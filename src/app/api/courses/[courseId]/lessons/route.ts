@@ -12,7 +12,7 @@ export async function GET(
     const user = await currentUser()
     console.log("Current user:", user ? "authenticated" : "not authenticated")
     
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -117,7 +117,7 @@ export async function POST(
     const user = await currentUser()
     console.log("Current user:", user ? "authenticated" : "not authenticated")
     
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

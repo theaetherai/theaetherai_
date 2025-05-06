@@ -24,7 +24,7 @@ export async function PATCH(
     console.log('[ROUTE_DEBUG] Authenticating user with Clerk')
     const user = await currentUser()
     
-    if (!userId) {
+    if (!user?.id) {
       console.error('[ROUTE_DEBUG] Authentication failed - no user found')
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -336,7 +336,7 @@ export async function DELETE(
   try {
     const user = await currentUser()
     
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -422,7 +422,7 @@ export async function GET(
   try {
     const user = await currentUser()
     
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

@@ -9,7 +9,7 @@ export async function POST(
   try {
     const { userId } = getAuth(req);
     
-    if (!userId) {
+    if (!user?.id) {
       return new Response("Unauthorized", { status: 401 });
     }
     
@@ -181,7 +181,7 @@ export async function GET(
   try {
     const { userId } = getAuth(req);
     
-    if (!userId) {
+    if (!user?.id) {
       return new Response("Unauthorized", { status: 401 });
     }
     
@@ -229,7 +229,7 @@ export async function DELETE(
     const { searchParams } = new URL(req.url);
     const submissionId = searchParams.get("submissionId");
     
-    if (!userId) {
+    if (!user?.id) {
       return new Response("Unauthorized", { status: 401 });
     }
     

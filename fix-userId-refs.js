@@ -10,52 +10,15 @@ const writeFile = promisify(fs.writeFile);
 // Patterns to find and replace
 const patterns = [
   {
-    // Find: import { getAuth } from "@clerk/nextjs/server";
-    // Replace: import { getAuth } from "@clerk/nextjs/server";
-    find: /import\s+\{\s*currentUser\s*\}\s+from\s+["']@clerk\/nextjs["'];?/g,
-    replace: 'import { getAuth } from "@clerk/nextjs/server";'
-  },
-  {
-    // Find: import { client } from "../../lib/prisma";
-    // Replace: import { client } from "../../lib/prisma";
-    find: /import\s+\{\s*db\s*\}\s+from\s+["'](.*)\/lib\/db["'];?/g,
-    replace: 'import { client } from "$1/lib/prisma";'
-  },
-  {
-    // Find: const { userId } = getAuth(req);
-    // Replace: const { userId } = getAuth(req);
-    find: /const\s+user\s*=\s*await\s+currentUser\(\);/g,
-    replace: 'const { userId } = getAuth(req);'
-  },
-  {
     // Find: if (!user?.id)
     // Replace: if (!user?.id)
-    find: /if\s*\(\s*!user\s*\)/g,
+    find: /if\s*\(\s*!userId\s*\)/g,
     replace: 'if (!user?.id)'
   },
   {
-    // Find: clerkid: userId
-    // Replace: clerkid: userId
-    find: /clerkId:\s*user\.id/g,
-    replace: 'clerkid: userId'
-  },
-  {
-    // Find: db.anyMethod
-    // Replace: client.anyMethod
-    find: /db\.([\w]+)\./g,
-    replace: 'client.$1.'
-  },
-  {
-    // Find: db.anyMethod
-    // Replace: client.anyMethod
-    find: /db\.([\w]+)\(/g,
-    replace: 'client.$1('
-  },
-  {
-    // Find: user.publicMetadata
-    // Replace: Just remove these checks where possible
-    find: /&&\s*(?:!user\.publicMetadata\.isAdmin|!user\.publicMetadata\.admin)/g,
-    replace: ''
+    // In case there are instances where the user variable might be null
+    find: /const\s+\{\s*userId\s*\}\s*=\s*await\s+currentUser\(\)/g,
+    replace: 'const user = await currentUser()'
   }
 ];
 
@@ -90,12 +53,10 @@ async function processFile(filePath) {
     let fileContent = await readFile(filePath, 'utf8');
     let modified = false;
     
-    // Check if file has any of our target patterns before processing
-    const hasTargetImports = fileContent.includes('currentUser') || 
-                            fileContent.includes('db') ||
-                            fileContent.includes('@clerk/nextjs');
+    // Check if file has userId references before processing
+    const hasUserId = fileContent.includes('userId');
     
-    if (!hasTargetImports) {
+    if (!hasUserId) {
       return 0;
     }
     
@@ -126,7 +87,7 @@ async function processFile(filePath) {
 async function main() {
   try {
     const rootDir = process.cwd();
-    console.log(`Scanning for files in: ${rootDir}`);
+    console.log(`Scanning for files with userId references in: ${rootDir}`);
     
     const files = await getAllFiles(rootDir);
     console.log(`Found ${files.length} files to process`);

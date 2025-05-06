@@ -10,7 +10,7 @@ export async function GET(
   try {
     const { userId } = getAuth(req);
 
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -107,7 +107,7 @@ export async function PATCH(
     
     const { userId } = getAuth(req);
 
-    if (!userId) {
+    if (!user?.id) {
       console.log("[LESSON_UPDATE] Auth failed - no current user");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -360,7 +360,7 @@ export async function DELETE(
   try {
     const { userId } = getAuth(req);
 
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

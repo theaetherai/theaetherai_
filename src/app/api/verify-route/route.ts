@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const { userId } = auth()
     
     // Only allow authenticated users to check routes
-    if (!userId) {
+    if (!user?.id) {
       return apiError('Unauthorized', 401)
     }
     

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,57 +8,57 @@ datasource db {
 }
 
 model User {
-  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                String                 @unique
-  firstname            String?
-  lastname             String?
-  createdAt            DateTime               @default(now())
-  clerkid              String                 @unique
-  studio               Media?
-  image                String?
-  role                 String                 @default("student") // "student", "instructor", "admin"
-  workspace            WorkSpace[]
-  videos               Video[]
-  subscription         Subscription?
-  members              Member[]
-  notification         Notification[]
-  sender               Invite[]               @relation("sender")
-  reciever             Invite[]               @relation("reciever")
-  trial                Boolean                @default(false)
-  firstView            Boolean                @default(false)
-  comment              Comment[]
-  ownedCourses         Course[]
-  enrollments          Enrollment[]
-  progress             LearningProgress[]
-  feedback             Feedback[]
-  ratings              Rating[] // New relation for course ratings
-  aiTutorInteractions  AiTutorInteraction[]
-  lessonProgress       LessonProgress[]
-  quizAttempts         QuizAttempt[]
+  id                    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String                 @unique
+  firstname             String?
+  lastname              String?
+  createdAt             DateTime               @default(now())
+  clerkid               String                 @unique
+  image                 String?
+  trial                 Boolean                @default(false)
+  firstView             Boolean                @default(false)
+  role                  String                 @default("student")
+  aiTutorInteractions   AiTutorInteraction[]
   assignmentSubmissions AssignmentSubmission[]
+  comment               Comment[]
+  ownedCourses          Course[]
+  enrollments           Enrollment[]
+  feedback              Feedback[]
+  reciever              Invite[]               @relation("reciever")
+  sender                Invite[]               @relation("sender")
+  progress              LearningProgress[]
+  lessonProgress        LessonProgress[]
+  studio                Media?
+  members               Member[]
+  notification          Notification[]
+  quizAttempts          QuizAttempt[]
+  ratings               Rating[]
+  subscription          Subscription?
+  videos                Video[]
+  workspace             WorkSpace[]
 }
 
 model Comment {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   comment   String
-  reply     Comment[] @relation("reply")
-  Comment   Comment?  @relation("reply", fields: [commentId], references: [id])
   commentId String?   @db.Uuid
-  User      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String?   @db.Uuid
-  Video     Video?    @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId   String?   @db.Uuid
   createdAt DateTime  @default(now())
+  Comment   Comment?  @relation("reply", fields: [commentId], references: [id])
+  reply     Comment[] @relation("reply")
+  User      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Video     Video?    @relation(fields: [videoId], references: [id], onDelete: Cascade)
 }
 
 model Subscription {
   id         String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  User       User?             @relation(fields: [userId], references: [id])
   userId     String?           @unique @db.Uuid
   createdAt  DateTime          @default(now())
   plan       SUBSCRIPTION_PLAN @default(FREE)
   updatedAt  DateTime          @default(now())
   customerId String?           @unique
+  User       User?             @relation(fields: [userId], references: [id])
 }
 
 model Media {
@@ -73,83 +67,260 @@ model Media {
   mic    String?
   camera String?
   preset PRESET  @default(SD)
-  User   User?   @relation(fields: [userId], references: [id])
   userId String? @unique @db.Uuid
+  User   User?   @relation(fields: [userId], references: [id])
 }
 
 model WorkSpace {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   type      Type
   name      String
-  User      User?    @relation(fields: [userId], references: [id])
   userId    String?  @db.Uuid
   createdAt DateTime @default(now())
   folders   Folder[]
-  videos    Video[]
-  members   Member[]
   invite    Invite[]
+  members   Member[]
+  videos    Video[]
+  User      User?    @relation(fields: [userId], references: [id])
 }
 
 model Folder {
   id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String     @default("Untitled Folder")
   createdAt   DateTime   @default(now())
-  WorkSpace   WorkSpace? @relation(fields: [workSpaceId], references: [id])
   workSpaceId String?    @db.Uuid
+  WorkSpace   WorkSpace? @relation(fields: [workSpaceId], references: [id])
   videos      Video[]
 }
 
 model Video {
   id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title            String?    @default("Untilted Video")
-  description      String?    @default("No Description") // description Ai generated summary
+  description      String?    @default("No Description")
   source           String     @unique
   createdAt        DateTime   @default(now())
-  Folder           Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade)
   folderId         String?    @db.Uuid
-  User             User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String?    @db.Uuid
   processing       Boolean    @default(true)
-  processingStatus String? // Status of processing: DOWNLOADING, TRANSCRIBING, SUMMARIZING, COMPLETED, FAILED
-  processingError  String? // Error message if processing failed
-  WorkSpace        WorkSpace? @relation(fields: [workSpaceId], references: [id], onDelete: Cascade)
   workSpaceId      String?    @db.Uuid
   views            Int        @default(0)
-  summery          String? //summery is the transcript of the video
-  transcript       String? // Separate field for transcript (in addition to summery for compatibility)
-  summary          String? // Properly named summary field
-  aiKeywords       String[] // Added AI-extracted keywords from content
+  summery          String?
+  aiKeywords       String[]
+  processingError  String?
+  processingStatus String?
+  summary          String?
+  transcript       String?
   Comment          Comment[]
-  lessons          Lesson[] // Added relation to Lesson model
+  lessons          Lesson[]
+  Folder           Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  User             User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  WorkSpace        WorkSpace? @relation(fields: [workSpaceId], references: [id], onDelete: Cascade)
 }
 
 model Member {
   id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  User        User?      @relation(fields: [userId], references: [id])
   userId      String?    @db.Uuid
   createdAt   DateTime   @default(now())
   member      Boolean    @default(true)
-  WorkSpace   WorkSpace? @relation(fields: [workSpaceId], references: [id])
   workSpaceId String?    @db.Uuid
+  User        User?      @relation(fields: [userId], references: [id])
+  WorkSpace   WorkSpace? @relation(fields: [workSpaceId], references: [id])
 }
 
 model Notification {
   id      String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  User    User?   @relation(fields: [userId], references: [id])
   userId  String? @db.Uuid
   content String
+  User    User?   @relation(fields: [userId], references: [id])
 }
 
 model Invite {
   id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sender      User?      @relation("sender", fields: [senderId], references: [id])
   senderId    String?    @db.Uuid
-  reciever    User?      @relation("reciever", fields: [recieverId], references: [id])
   recieverId  String?    @db.Uuid
   content     String
-  WorkSpace   WorkSpace? @relation(fields: [workSpaceId], references: [id])
   workSpaceId String?    @db.Uuid
   accepted    Boolean    @default(false)
+  reciever    User?      @relation("reciever", fields: [recieverId], references: [id])
+  sender      User?      @relation("sender", fields: [senderId], references: [id])
+  WorkSpace   WorkSpace? @relation(fields: [workSpaceId], references: [id])
+}
+
+model Course {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title            String
+  description      String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  userId           String?      @db.Uuid
+  bestseller       Boolean      @default(false)
+  category         String?
+  discountPrice    Decimal?     @db.Decimal(10, 2)
+  featured         Boolean      @default(false)
+  level            String?
+  objectives       String[]
+  popular          Boolean      @default(false)
+  price            Decimal?     @db.Decimal(10, 2)
+  published        Boolean      @default(false)
+  requirements     String[]
+  shortDescription String?
+  targetAudience   String?
+  thumbnailUrl     String?
+  totalDuration    Int?
+  User             User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags             CourseTag[]
+  enrollments      Enrollment[]
+  lessons          Lesson[]
+  ratings          Rating[]
+  sections         Section[]
+}
+
+model Rating {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  rating    Int
+  review    String?
+  createdAt DateTime @default(now())
+  userId    String?  @db.Uuid
+  courseId  String?  @db.Uuid
+  Course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  User      User?    @relation(fields: [userId], references: [id])
+}
+
+model CourseTag {
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name     String
+  courseId String? @db.Uuid
+  Course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Section {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  order       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  courseId    String?  @db.Uuid
+  description String?
+  lessons     Lesson[]
+  Course      Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Lesson {
+  id                    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title                 String
+  content               String?
+  order                 Int
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  courseId              String?                @db.Uuid
+  videoId               String?                @db.Uuid
+  duration              Int?
+  sectionId             String?                @db.Uuid
+  description           String?
+  previewable           Boolean                @default(false)
+  dueDate               DateTime?
+  fileTypes             String[]
+  maxFileSize           Int?
+  maxFiles              Int?
+  passingScore          Int?
+  questions             Json?
+  rubric                Json?
+  timeLimit             Int?
+  type                  LessonType             @default(video)
+  aiTutorInteractions   AiTutorInteraction[]
+  assignmentSubmissions AssignmentSubmission[]
+  learningProgress      LearningProgress[]
+  course                Course?                @relation(fields: [courseId], references: [id])
+  section               Section?               @relation(fields: [sectionId], references: [id])
+  video                 Video?                 @relation(fields: [videoId], references: [id])
+  progress              LessonProgress[]
+  quizAttempts          QuizAttempt[]
+}
+
+model LessonProgress {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @db.Uuid
+  lessonId     String   @db.Uuid
+  progress     Int      @default(0)
+  completed    Boolean  @default(false)
+  lastAccessed DateTime @default(now())
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @db.Uuid
+  lessonId  String   @db.Uuid
+  answers   Json
+  score     Int
+  passed    Boolean  @default(false)
+  timeSpent Int?
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AssignmentSubmission {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @db.Uuid
+  lessonId    String    @db.Uuid
+  content     String?
+  fileUrls    Json?
+  status      String    @default("submitted")
+  submittedAt DateTime  @default(now())
+  grade       Int?
+  feedback    String?
+  gradedAt    DateTime?
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Enrollment {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime  @default(now())
+  userId      String?   @db.Uuid
+  courseId    String?   @db.Uuid
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  Course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  User        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LearningProgress {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  completed      Boolean  @default(false)
+  userId         String?  @db.Uuid
+  lessonId       String?  @db.Uuid
+  watchedSeconds Int      @default(0)
+  lesson         Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  User           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type      String
+  userId    String?  @db.Uuid
+  createdAt DateTime @default(now())
+  text      String
+  User      User?    @relation(fields: [userId], references: [id])
+}
+
+model AiTutorInteraction {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @db.Uuid
+  lessonId  String?  @db.Uuid
+  prompt    String
+  response  String
+  context   String
+  rating    Int?
+  createdAt DateTime @default(now())
+  lesson    Lesson?  @relation(fields: [lessonId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Type {
@@ -167,206 +338,9 @@ enum SUBSCRIPTION_PLAN {
   FREE
 }
 
-model Course {
-  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title            String
-  description      String?
-  shortDescription String? // Brief summary for cards
-  price            Decimal?     @db.Decimal(10, 2)
-  discountPrice    Decimal?     @db.Decimal(10, 2)
-  thumbnailUrl     String? // Course thumbnail image
-  category         String? // E.g., "Development", "Business", etc.
-  level            String? // "Beginner", "Intermediate", "Advanced", "All Levels"
-  bestseller       Boolean      @default(false)
-  featured         Boolean      @default(false)
-  popular          Boolean      @default(false)
-  published        Boolean      @default(false) // Allow drafts before publishing
-  requirements     String[] // What students need before starting
-  objectives       String[] // What students will learn
-  targetAudience   String? // Who the course is for
-  totalDuration    Int? // Total minutes of video content
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  User             User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String?      @db.Uuid
-  lessons          Lesson[]
-  sections         Section[]
-  enrollments      Enrollment[]
-  ratings          Rating[] // Course ratings from students
-  tags             CourseTag[] // Tags for categorization and search
-}
-
-model Rating {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  rating    Int // 1-5 star rating
-  review    String? // Text review
-  createdAt DateTime @default(now())
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @db.Uuid
-  Course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId  String?  @db.Uuid
-}
-
-model CourseTag {
-  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name     String
-  Course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId String? @db.Uuid
-}
-
-model Section {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  description String? // Description of section content
-  order       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Course      Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId    String?  @db.Uuid
-  lessons     Lesson[]
-}
-
-// Adding enum for lesson types
 enum LessonType {
   video
   text
   quiz
   assignment
-}
-
-// Modify the Lesson model to include type information
-model Lesson {
-  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  description String?
-  content     String? // Lesson content (HTML/Markdown)
-  type        LessonType @default(video) // Changed from String to LessonType enum
-  order       Int
-  duration    Int? // Duration in minutes
-  previewable Boolean    @default(false) // Available in free preview?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  sectionId   String?    @db.Uuid
-  videoId     String?    @db.Uuid
-
-  // Quiz specific fields
-  questions    Json? // Array of questions for quiz type
-  passingScore Int? // Percentage needed to pass (quiz)
-  timeLimit    Int? // Time limit in minutes (quiz)
-
-  // Assignment specific fields
-  rubric      Json? // Grading rubric for assignments
-  dueDate     DateTime? // Due date for assignments
-  fileTypes   String[] // Allowed file types
-  maxFileSize Int? // Max file size in MB
-  maxFiles    Int? // Max number of files allowed
-
-  // Relations
-  section               Section?               @relation(fields: [sectionId], references: [id], onDelete: SetNull)
-  video                 Video?                 @relation(fields: [videoId], references: [id], onDelete: SetNull)
-  progress              LessonProgress[]
-  quizAttempts          QuizAttempt[]
-  assignmentSubmissions AssignmentSubmission[]
-  course                Course?                @relation(fields: [courseId], references: [id])
-  courseId              String?                @db.Uuid
-  learningProgress      LearningProgress[]
-  aiTutorInteractions   AiTutorInteraction[]
-}
-
-// Existing model, you may have this already
-model LessonProgress {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId       String   @db.Uuid
-  lessonId     String   @db.Uuid
-  progress     Int      @default(0) // Percentage complete
-  completed    Boolean  @default(false)
-  lastAccessed DateTime @default(now())
-
-  // Relations
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId])
-}
-
-// New model for quiz attempts
-model QuizAttempt {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @db.Uuid
-  lessonId  String   @db.Uuid
-  answers   Json // Student's answers
-  score     Int // Percentage score
-  passed    Boolean  @default(false)
-  timeSpent Int? // Time spent in seconds
-  createdAt DateTime @default(now())
-
-  // Relations
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-}
-
-// New model for assignment submissions
-model AssignmentSubmission {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId      String    @db.Uuid
-  lessonId    String    @db.Uuid
-  content     String? // Text content of submission
-  fileUrls    Json? // Array of file URLs
-  status      String    @default("submitted") // submitted, graded, returned
-  submittedAt DateTime  @default(now())
-  grade       Int? // Percentage grade
-  feedback    String? // Instructor feedback
-  gradedAt    DateTime? // When it was graded
-
-  // Relations
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-}
-
-model Enrollment {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt   DateTime  @default(now())
-  User        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String?   @db.Uuid
-  Course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId    String?   @db.Uuid
-  completed   Boolean   @default(false)
-  completedAt DateTime?
-}
-
-model LearningProgress {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  completed      Boolean  @default(false)
-  watchedSeconds Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  User           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String?  @db.Uuid
-  lesson         Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  lessonId       String?  @db.Uuid
-}
-
-model Feedback {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  text      String
-  type      String // "bug", "feature", "general"
-  createdAt DateTime @default(now())
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @db.Uuid
-}
-
-// Add this new model
-model AiTutorInteraction {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @db.Uuid
-  lessonId  String?  @db.Uuid
-  prompt    String // User's prompt
-  response  String // AI's response
-  context   String // Context of the interaction (e.g., assignment_draft, quiz_help)
-  rating    Int? // Optional user rating of the response
-  createdAt DateTime @default(now())
-
-  // Relations
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
 }

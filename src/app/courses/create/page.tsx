@@ -5,7 +5,7 @@ import CourseEditor from '../../../components/courses/course-editor'
 export default async function CreateCoursePage() {
   const user = await currentUser()
   
-  if (!userId) {
+  if (!user?.id) {
     redirect('/auth/sign-in')
   }
   

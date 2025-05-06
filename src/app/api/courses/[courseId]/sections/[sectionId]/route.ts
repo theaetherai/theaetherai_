@@ -9,7 +9,7 @@ export async function PATCH(
   try {
     const user = await currentUser()
     
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -101,7 +101,7 @@ export async function DELETE(
   try {
     const user = await currentUser()
     
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

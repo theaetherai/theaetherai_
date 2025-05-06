@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     const user = await currentUser()
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { status: 401, message: 'Unauthorized' },
         { status: 401 }
@@ -97,7 +97,7 @@ export async function DELETE(
 ) {
   try {
     const user = await currentUser()
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { status: 401, message: 'Unauthorized' },
         { status: 401 }

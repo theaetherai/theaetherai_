@@ -1,0 +1,155 @@
+# Fixing "Maximum call stack size exceeded" Error in Next.js Deployments
+
+This document provides solutions for the "Maximum call stack size exceeded" errors during Next.js builds and deployments.
+
+## Root Causes
+
+This error typically occurs due to:
+
+1. **Circular Dependencies**: Components or modules importing each other in a circular manner
+2. **Recursive Component Rendering**: Components rendering themselves infinitely without termination conditions
+3. **Stack Size Limitations**: Default Node.js stack size may be too small for complex component trees
+4. **Infinite React Reconciliation**: Component state updates causing infinite re-renders
+
+## Available Tools in This Repository
+
+We've created several tools to help diagnose and fix stack size issues:
+
+1. **find-circular-deps.js**: Identifies circular dependencies in your codebase
+   ```
+   npm run find-circular
+   ```
+
+2. **fix-recursive-imports.js**: Fixes common patterns that cause recursive rendering
+   ```
+   npm run fix-recursive
+   ```
+
+3. **increase-stack-size.js**: Applies configuration changes to increase stack size
+   ```
+   npm run increase-stack
+   ```
+
+4. **verify-deployment.js**: Checks overall project configuration for deployment readiness
+   ```
+   npm run verify
+   ```
+
+## Step-by-Step Solution
+
+### 1. Apply Stack Size Increase (Quick Fix)
+
+Run the following command to apply immediate fixes:
+
+```
+npm run increase-stack
+```
+
+This will:
+- Update build script to use increased stack size
+- Create optimized Babel configuration
+- Update next.config.js with performance settings
+- Update vercel.json with higher memory limits
+
+### 2. Find and Fix Circular Dependencies
+
+Run the circular dependency finder:
+
+```
+npm run find-circular
+```
+
+This tool will analyze your codebase and identify any circular import patterns. When found, refactor these dependencies:
+
+- Extract shared logic to a separate utility file
+- Use dynamic imports with `React.lazy()`
+- Refactor component hierarchy to avoid circular relationships
+
+### 3. Fix Recursive Component Patterns
+
+Identify and fix components with recursive rendering issues:
+
+```
+npm run fix-recursive
+```
+
+This tool automatically fixes common patterns that cause stack size issues:
+- Add termination conditions to recursive components
+- Move state updates to useEffect hooks to prevent render loops
+- Fix nested component definitions with same names
+- Remove self-importing components
+
+### 4. Manual Fixes for Complex Cases
+
+If automated tools don't resolve the issue, consider these manual approaches:
+
+1. **React.memo for Component Memoization**:
+   ```jsx
+   const MyComponent = React.memo(function MyComponent(props) {
+     // Component implementation
+   });
+   ```
+
+2. **Use Dynamic Imports**:
+   ```jsx
+   const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
+   
+   function MyApp() {
+     return (
+       <React.Suspense fallback={<div>Loading...</div>}>
+         <HeavyComponent />
+       </React.Suspense>
+     );
+   }
+   ```
+
+3. **Refactor Deeply Nested Components**:
+   - Break large components into smaller focused ones
+   - Use composition instead of nesting
+
+### 5. Vercel-Specific Configuration
+
+Our `vercel.json` now includes:
+
+```json
+{
+  "functions": {
+    "app/**/*.js": {
+      "memory": 3008
+    }
+  },
+  "buildCommand": "node --stack-size=4000 ./node_modules/.bin/next build",
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=3072"
+  }
+}
+```
+
+This configuration:
+- Increases memory for serverless functions to 3GB
+- Uses a custom build command with increased stack size
+- Adds environment variables to optimize Node.js memory usage
+
+## Prevention Strategies
+
+To prevent stack size issues in the future:
+
+1. **Use Component Design Best Practices**:
+   - Keep components focused and small
+   - Use props for data flow instead of circular dependencies
+   - Memoize expensive components and calculations
+
+2. **State Management**:
+   - Use appropriate state management for your app scale
+   - Be careful with unconditional state updates in render functions
+
+3. **Project Structure**:
+   - Organize files to prevent circular dependencies
+   - Maintain clear boundaries between feature areas
+
+## References
+
+- [Next.js Performance Optimization](https://nextjs.org/docs/advanced-features/performance)
+- [React Profiler for Performance Analysis](https://reactjs.org/docs/profiler.html)
+- [Vercel Serverless Functions](https://vercel.com/docs/functions/serverless-functions)
+- [Node.js Command Line Options](https://nodejs.org/api/cli.html#--stack-sizesize) 

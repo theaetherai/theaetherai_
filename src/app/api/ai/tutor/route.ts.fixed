@@ -3,18 +3,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import OpenAI from "openai";
 import { client } from "../../../../lib/prisma";
 
-// Initialize OpenAI client with proper configuration
-// Use GROQ if available, fallback to OpenAI
-const openaiApiKey = process.env.GROQ_API_KEY || process.env.OPEN_AI_KEY;
-const useGroq = !!process.env.GROQ_API_KEY;
-
 const openai = new OpenAI({
-  apiKey: openaiApiKey,
-  baseURL: useGroq ? 'https://api.groq.com/openai/v1' : undefined,
+  apiKey: process.env.OPEN_AI_KEY,
+  baseURL: 'https://api.groq.com/openai/v1', // replace with actual Grok base URL
 });
-
-// Default model selection based on available API
-const defaultModel = useGroq ? "llama3-8b-8192" : "gpt-3.5-turbo";
 
 export async function POST(req: Request) {
   try {
@@ -192,11 +184,11 @@ export async function POST(req: Request) {
     }
     
     // Generate AI response
-    console.log(`[AI_TUTOR_OPENAI_REQUEST] Sending request to OpenAI, model: ${defaultModel}`);
+    console.log(`[AI_TUTOR_OPENAI_REQUEST] Sending request to OpenAI, model: qwen-qwq-32b`);
     let chatCompletion;
     try {
       chatCompletion = await openai.chat.completions.create({
-        model: defaultModel,
+        model: "qwen-qwq-32b",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: prompt }
@@ -227,7 +219,7 @@ export async function POST(req: Request) {
     
     // Log user interaction with AI tutor
     try {
-      await client.aiTutorInteraction.create({
+      await client.aiInteraction.create({
         data: {
           userId: user.id,
           prompt: prompt,

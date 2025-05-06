@@ -17,7 +17,7 @@ export default async function AnalyticsDashboard() {
 
   // Get current user
   const user = await currentUser()
-  if (!userId) {
+  if (!user?.id) {
     return redirect('/auth/sign-in')
   }
 

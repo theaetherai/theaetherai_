@@ -863,7 +863,7 @@ export default function VideoLessonView({
       return;
     }
     
-    if (!userId) {
+    if (!user?.id) {
       console.error('Cannot create quiz lesson: No user ID');
       toast.error("Please sign in to create quizzes");
       return;

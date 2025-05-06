@@ -17,7 +17,7 @@ export async function POST(
   try {
     const { userId } = getAuth(req);
     
-    if (!userId) {
+    if (!user?.id) {
       return apiUnauthorized();
     }
     
@@ -139,7 +139,7 @@ export async function GET(
   try {
     const { userId } = getAuth(req);
     
-    if (!userId) {
+    if (!user?.id) {
       return apiUnauthorized();
     }
     
@@ -182,7 +182,7 @@ export async function DELETE(
   try {
     const { userId } = getAuth(req);
     
-    if (!userId) {
+    if (!user?.id) {
       return apiUnauthorized();
     }
     

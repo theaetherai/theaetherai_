@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_CLIENT_SECRET as string)
 export async function GET() {
   console.log(process.env.STRIPE_CLIENT_SECRET, 'GEt endpoint hit👉🏻')
   const user = await currentUser()
-  if (!userId) return NextResponse.json({ status: 404 })
+  if (!user?.id) return NextResponse.json({ status: 404 })
   const priceId = process.env.STRIPE_SUBSCRIPTION_PRICE_ID
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
