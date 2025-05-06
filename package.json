@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm install --legacy-peer-deps && prisma generate && node --stack-size=4000 ./node_modules/.bin/next build",
+    "build": "npm install --legacy-peer-deps && prisma generate && cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
     "start": "next start",
     "lint": "next lint",
     "verify": "node verify-deployment.js",

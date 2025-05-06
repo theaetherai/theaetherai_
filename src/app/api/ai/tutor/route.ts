@@ -1,205 +1,133 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
-import OpenAI from "openai";
 import { PrismaClient } from "@prisma/client";
+import OpenAI from "openai";
 
-// Create a direct instance of PrismaClient to avoid circular dependencies
+// ----- Separate all the heavy logic into isolated functions to prevent circular dependencies -----
+
+// Create a minimal Prisma client - using the simplest possible approach
 const prisma = new PrismaClient();
 
-// Initialize OpenAI client with proper configuration
-// Use GROQ if available, fallback to OpenAI
-const openaiApiKey = process.env.GROQ_API_KEY || process.env.OPEN_AI_KEY;
-const useGroq = !!process.env.GROQ_API_KEY;
+// Initialize OpenAI in a separate function to avoid potential circular dependencies
+function getOpenAIClient() {
+  const openaiApiKey = process.env.GROQ_API_KEY || process.env.OPEN_AI_KEY;
+  const useGroq = !!process.env.GROQ_API_KEY;
+  
+  return new OpenAI({
+    apiKey: openaiApiKey,
+    baseURL: useGroq ? 'https://api.groq.com/openai/v1' : undefined,
+  });
+}
 
-const openai = new OpenAI({
-  apiKey: openaiApiKey,
-  baseURL: useGroq ? 'https://api.groq.com/openai/v1' : undefined,
-});
+// Get the appropriate model in a separate function
+function getAIModel() {
+  const useGroq = !!process.env.GROQ_API_KEY;
+  return useGroq ? "llama3-8b-8192" : "gpt-3.5-turbo";
+}
 
-// Default model selection based on available API
-const defaultModel = useGroq ? "llama3-8b-8192" : "gpt-3.5-turbo";
+// Build system prompt in a separate function to simplify the main handler
+function buildSystemPrompt(context: string, instructions?: string, rubric?: any[]) {
+  let systemPrompt = "You are an AI tutor for an online learning platform called Opal.";
+  
+  // Add context-specific instructions
+  switch (context) {
+    case "generate_quiz":
+      systemPrompt += `
+      You are generating a quiz based on video content. The transcript of the video is provided.
+      
+      Your task is to:
+      1. Analyze the transcript and identify key concepts and information
+      2. Create quiz questions that test understanding of the material
+      3. Format your response as a valid JSON array that can be parsed
+      
+      Return ONLY valid JSON array matching this exact structure:
+      [
+        {
+          "id": "q-1",
+          "text": "Question text?",
+          "type": "multipleChoice",
+          "points": 1,
+          "options": [
+            {"id": "o-1-1", "text": "Option A", "isCorrect": false},
+            {"id": "o-1-2", "text": "Option B", "isCorrect": true},
+            {"id": "o-1-3", "text": "Option C", "isCorrect": false},
+            {"id": "o-1-4", "text": "Option D", "isCorrect": false}
+          ]
+        }
+      ]`;
+      break;
+      
+    case "assignment_draft":
+      systemPrompt += `
+      You are helping a student with drafting an assignment response. The assignment instructions are:
+      
+      ${instructions || "No specific instructions provided"}
+      
+      Your task is to help the student by creating a draft based on their prompt.`;
+      break;
+      
+    case "assignment_feedback":
+      systemPrompt += `
+      You are providing feedback on a student's work in progress for an assignment. 
+      The assignment instructions are: ${instructions}`;
+      
+      if (rubric?.length) {
+        systemPrompt += ` The assignment will be graded according to a rubric.`;
+      }
+      break;
+      
+    case "assignment_assessment":
+      systemPrompt += `
+      You are conducting a pre-submission assessment of a student's assignment.
+      The assignment instructions are: ${instructions}`;
+      break;
+      
+    case "quiz_help":
+      systemPrompt += `
+      You are helping a student understand a concept related to a quiz.`;
+      break;
+      
+    case "generate_summary":
+      systemPrompt += `
+      You are an educational content summarizer. Create a structured summary with key concepts, definitions, and important points.`;
+      break;
+      
+    default:
+      systemPrompt += `
+      You're helping the student learn and understand course materials.`;
+  }
+  
+  return systemPrompt;
+}
 
+// Main API handler - kept as minimal as possible
 export async function POST(req: Request) {
   try {
-    console.log("[AI_TUTOR_REQUEST] New request received");
-    
-    // Get user information first
+    // Get user information
     const user = await currentUser();
-    
     if (!user?.id) {
-      console.log("[AI_TUTOR_AUTH_ERROR] No authenticated user found");
       return new Response("Unauthorized", { status: 401 });
     }
     
-    console.log(`[AI_TUTOR_AUTH] User authenticated: ${user.id}`);
-    
-    let requestBody;
-    try {
-      requestBody = await req.json();
-    } catch (parseError) {
-      console.error("[AI_TUTOR_REQUEST_PARSE_ERROR]", parseError);
-      return new Response("Invalid JSON in request body", { status: 400 });
-    }
-    
-    const { prompt, context, instructions, rubric } = requestBody;
+    // Parse request body with minimal error handling
+    const { prompt, context = "general", instructions, rubric } = await req.json().catch(() => ({}));
     
     if (!prompt) {
-      console.log("[AI_TUTOR_VALIDATION_ERROR] Missing prompt");
       return new Response("Prompt is required", { status: 400 });
     }
     
-    console.log(`[AI_TUTOR_REQUEST_INFO] Context: ${context}, Prompt length: ${prompt.length}`);
-    
-    let systemPrompt = "You are an AI tutor for an online learning platform called Opal.";
-    
-    // Add context-specific instructions
-    switch (context) {
-      case "generate_quiz":
-        systemPrompt += `
-        You are generating a quiz based on video content. The transcript of the video is provided.
-        
-        Your task is to:
-        1. Analyze the transcript and identify key concepts and information
-        2. Create quiz questions that test understanding of the material
-        3. Format your response as a valid JSON array that can be parsed
-        
-        For each question:
-        - Create either multiple choice (4 options) or true/false questions
-        - Ensure there is only one correct answer per question
-        - Assign a unique ID to each question and option
-        - Focus on meaningful content
-        
-        NOTE: Some transcripts may be very short. In these cases:
-        - Create simple questions based on the limited available content
-        - If not enough content is available for meaningful questions, 
-          create basic true/false questions about the general topic
-        - Create as many questions as the content allows for (even if fewer than 5)
-        
-        FORMAT REQUIREMENTS:
-        Return ONLY valid JSON array matching this exact structure:
-        [
-          {
-            "id": "q-1",
-            "text": "Question text?",
-            "type": "multipleChoice",
-            "points": 1,
-            "options": [
-              {"id": "o-1-1", "text": "Option A", "isCorrect": false},
-              {"id": "o-1-2", "text": "Option B", "isCorrect": true},
-              {"id": "o-1-3", "text": "Option C", "isCorrect": false},
-              {"id": "o-1-4", "text": "Option D", "isCorrect": false}
-            ]
-          }
-        ]
-        
-        For true/false questions, only include two options with text "True" and "False".
-        Do not include any explanatory text, just the JSON array.
-        `;
-        break;
-        
-      case "assignment_draft":
-        systemPrompt += `
-        You are helping a student with drafting an assignment response. The assignment instructions are:
-        
-        ${instructions || "No specific instructions provided"}
-        
-        Your task is to help the student by creating a draft based on their prompt. 
-        DO NOT write a complete solution, but provide a helpful starting point with key ideas,
-        structure, and some content they can build upon. Include placeholders where 
-        they should add their own analysis or examples.
-        
-        Make your response focused, helpful, and educational. Format your response 
-        in clear sections with headings where appropriate.
-        `;
-        break;
-        
-      case "assignment_feedback":
-        systemPrompt += `
-        You are providing feedback on a student's work in progress for an assignment. 
-        The assignment instructions are:
-        
-        ${instructions}
-        
-        ${rubric?.length ? `The assignment will be graded according to this rubric:
-        ${JSON.stringify(rubric, null, 2)}` : ''}
-        
-        Your task is to provide constructive feedback to help the student improve their work.
-        Focus on:
-        1. Strengths - what they've done well
-        2. Areas for improvement - specific points they should revise
-        3. Suggestions - concrete ways to enhance their work
-        
-        Be supportive, specific, and actionable in your feedback. Don't rewrite their work,
-        but guide them toward improving it themselves.
-        `;
-        break;
-        
-      case "assignment_assessment":
-        systemPrompt += `
-        You are conducting a pre-submission assessment of a student's assignment.
-        The assignment instructions are:
-        
-        ${instructions}
-        
-        ${rubric?.length ? `The assignment will be graded according to this rubric:
-        ${JSON.stringify(rubric, null, 2)}` : ''}
-        
-        Evaluate the submission against each rubric criterion and provide a detailed assessment.
-        For each criterion:
-        1. Indicate the current performance level
-        2. Highlight strengths and weaknesses
-        3. Provide specific recommendations for improvement
-        
-        Also provide an overall assessment and estimated score based on the current state.
-        Format your response with clear headings and structure.
-        `;
-        break;
-        
-      case "quiz_help":
-        systemPrompt += `
-        You are helping a student understand a concept related to a quiz. 
-        Your task is to explain the concept in a way that helps them understand, 
-        but do NOT provide direct answers to quiz questions.
-        
-        Instead, focus on explaining the underlying concepts, providing examples,
-        and guiding their thinking process. Be educational and helpful while 
-        maintaining academic integrity.
-        `;
-        break;
-        
-      case "generate_summary":
-        systemPrompt += `
-        You are an educational content summarizer. Create a structured summary with key concepts, definitions, and important points that would help a student understand this material.
-          
-        Format your response in a clear, organized structure:
-        1. Start with a brief overview of the content IN FIRST PERSON (use "I", "me", "my")
-        2. Use sections with clear headings like "**Key Concepts I've Identified:**", "**Important Definitions:**", "**Main Points I Want to Highlight:**", etc.
-        3. Use bullet points (with * symbol) for each item within a section
-        4. Provide a concise conclusion in first person, as if you're directly speaking to the student
-
-        DO NOT ask for more information or state that no transcript was provided. Work with the transcript provided, even if it seems incomplete.
-        
-        Keep your summary concise - no more than 2-3 short paragraphs for the overview and 2-4 bullet points per section.
-        
-        IMPORTANT: Write in first person throughout, as if you (the AI tutor) are personally explaining the content to the student.
-        For example: "In this video, I'll summarize the key points about..." or "I've identified these important concepts..."
-        `;
-        break;
-        
-      default:
-        systemPrompt += `
-        You're helping the student learn and understand course materials. Provide
-        clear, concise, and educational responses to their questions. Use examples
-        when helpful, and explain concepts in a way that promotes learning.
-        `;
-    }
-    
-    // Generate AI response
-    console.log(`[AI_TUTOR_OPENAI_REQUEST] Sending request to OpenAI, model: ${defaultModel}`);
-    let chatCompletion;
+    // Generate AI response with minimal logic
     try {
-      chatCompletion = await openai.chat.completions.create({
-        model: defaultModel,
+      // Get OpenAI client on demand
+      const openai = getOpenAIClient();
+      const model = getAIModel();
+      
+      // Build prompt in a separate function
+      const systemPrompt = buildSystemPrompt(context, instructions, rubric);
+      
+      // Generate completion with minimal options
+      const chatCompletion = await openai.chat.completions.create({
+        model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: prompt }
@@ -207,53 +135,41 @@ export async function POST(req: Request) {
         temperature: 0.7,
         max_tokens: 1500
       });
-      console.log(`[AI_TUTOR_OPENAI_RESPONSE] Response received`);
-    } catch (openaiError: any) {
-      console.error("[AI_TUTOR_OPENAI_ERROR]", {
-        error: openaiError.message,
-        type: openaiError.type,
-        code: openaiError.code,
-        param: openaiError.param,
-        status: openaiError.status
-      });
       
+      const response = chatCompletion.choices[0].message.content || '';
+      
+      // Log interaction with minimal fields
+      try {
+        await prisma.aiTutorInteraction.create({
+          data: {
+            userId: user.id,
+            prompt: prompt.substring(0, 1000), // Limit length to avoid issues
+            response: response.substring(0, 1000), // Limit length to avoid issues
+            context: context || 'general',
+          }
+        });
+      } catch (dbError) {
+        // Ignore logging errors
+        console.error("DB Error:", dbError);
+      }
+      
+      // Return response with minimal processing
+      return NextResponse.json({ response });
+      
+    } catch (aiError: any) {
+      // Handle AI errors with minimal processing
       return NextResponse.json({ 
-        error: `OpenAI API error: ${openaiError.message}`,
-        code: openaiError.code || 'unknown_error',
-      }, { status: 502 }); // Bad Gateway - upstream service failed
+        error: "AI processing error"
+      }, { status: 502 });
     }
-    
-    const aiResponse = chatCompletion.choices[0].message.content || '';
-    
-    // Clean the response to remove any thinking tags
-    const cleanedResponse = aiResponse.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-    
-    // Log user interaction with AI tutor
-    try {
-      await prisma.aiTutorInteraction.create({
-        data: {
-          userId: user.id,
-          prompt: prompt,
-          response: cleanedResponse,
-          context: context || 'general',
-        }
-      });
-    } catch (dbError) {
-      console.error("[AI_TUTOR_DB_ERROR] Failed to log interaction:", dbError);
-      // Continue even if logging fails
-    }
-    
-    return NextResponse.json({ 
-      response: cleanedResponse
-    });
     
   } catch (error: any) {
-    console.error("[AI_TUTOR_ERROR]", error);
+    // Minimal error handling
     return NextResponse.json({ 
-      error: error.message || "An unexpected error occurred",
+      error: "Server error"
     }, { status: 500 });
   } finally {
-    // Make sure to disconnect Prisma to prevent connection leaks
-    await prisma.$disconnect();
+    // Always disconnect
+    await prisma.$disconnect().catch(() => {});
   }
 } 
