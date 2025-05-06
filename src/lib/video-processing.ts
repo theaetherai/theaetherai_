@@ -91,11 +91,14 @@ export async function checkProcessingStatus(videoId: string): Promise<{
   error?: string;
 }> {
   try {
+    // Use a direct Prisma query without additional joins to prevent recursion
     const video = await client.video.findUnique({
       where: { id: videoId },
       select: {
         processing: true,
-        description: true
+        description: true,
+        // Limiting fields to prevent potential circular references
+        // Do not include nested objects like User or WorkSpace
       }
     });
     
@@ -108,18 +111,20 @@ export async function checkProcessingStatus(videoId: string): Promise<{
     let error = undefined;
     
     if (video.description) {
-      if (video.description.includes('DOWNLOADING')) {
-        status = 'DOWNLOADING';
-      } else if (video.description.includes('TRANSCRIBING')) {
-        status = 'TRANSCRIBING';
-      } else if (video.description.includes('SUMMARIZING')) {
-        status = 'SUMMARIZING';
-      } else if (video.description.includes('FAILED')) {
-        status = 'FAILED';
-        // Try to extract error message
-        const errorMatch = video.description.match(/Failed: (.+)/);
-        if (errorMatch && errorMatch[1]) {
-          error = errorMatch[1];
+      if (typeof video.description === 'string') {
+        if (video.description.includes('DOWNLOADING')) {
+          status = 'DOWNLOADING';
+        } else if (video.description.includes('TRANSCRIBING')) {
+          status = 'TRANSCRIBING';
+        } else if (video.description.includes('SUMMARIZING')) {
+          status = 'SUMMARIZING';
+        } else if (video.description.includes('FAILED')) {
+          status = 'FAILED';
+          // Try to extract error message
+          const errorMatch = video.description.match(/Failed: (.+)/);
+          if (errorMatch && errorMatch[1]) {
+            error = errorMatch[1];
+          }
         }
       }
     }

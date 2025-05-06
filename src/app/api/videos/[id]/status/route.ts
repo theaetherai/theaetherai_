@@ -1,6 +1,5 @@
 import { client } from '../../../../../lib/prisma';
 import { NextResponse } from 'next/server';
-import { checkProcessingStatus } from '../../../../../lib/video-processing';
 
 export async function GET(
   request: Request,
@@ -16,35 +15,15 @@ export async function GET(
   }
   
   try {
-    // Get processing status info
-    const processingInfo = await checkProcessingStatus(id);
-    
-    // Get the video details from the database
+    // Super minimal query to avoid any potential circular references
     const video = await client.video.findUnique({
       where: { id },
       select: {
         id: true,
         title: true,
         source: true,
-        description: true,
         processing: true,
-        summery: true,
-        createdAt: true,
-        views: true,
-        aiKeywords: true,
-        User: {
-          select: {
-            id: true, 
-            firstname: true,
-            lastname: true
-          }
-        },
-        WorkSpace: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
+        createdAt: true
       }
     });
     
@@ -52,10 +31,15 @@ export async function GET(
       return NextResponse.json({ error: 'Video not found' }, { status: 404 });
     }
     
-    // Combine database info with processing status
+    // Determine processing status directly
+    const status = video.processing ? 'PROCESSING' : 'COMPLETED';
+    
+    // Return minimal information
     return NextResponse.json({ 
-      video,
-      processingInfo
+      video: {
+        ...video,
+        status
+      }
     });
   } catch (error: any) {
     console.error('Error fetching video status:', error);

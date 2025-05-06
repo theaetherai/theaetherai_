@@ -148,6 +148,50 @@ If you encounter build errors after applying these fixes, try these troubleshoot
    - Check for typos in import paths
    - Make sure all required dependencies are properly installed
 
+### 7. Fixing API Route Recursion Issues
+
+When you see errors specifically mentioning a particular API route like:
+
+```
+Error: Failed to collect page data for /api/videos/[id]/status
+```
+
+This typically means that specific route has a recursion or circular dependency issue:
+
+1. **Simplify API Response Structure**:
+   - Keep queries minimal, selecting only essential fields
+   - Avoid nested relationships unless absolutely necessary
+   - Example:
+     ```js
+     // AVOID:
+     const data = await prisma.model.findUnique({
+       where: { id },
+       include: { 
+         relatedModel: { include: { otherModel: true } } 
+       }
+     });
+     
+     // BETTER:
+     const data = await prisma.model.findUnique({
+       where: { id },
+       select: {
+         id: true,
+         name: true,
+         // Only select specific fields from related models
+         relatedModel: { select: { id: true, name: true } }
+       }
+     });
+     ```
+
+2. **Break Circular Dependencies**:
+   - Analyze where API routes might be calling each other
+   - If route A imports a utility that imports route B that imports route A, break the chain
+   - Move shared functionality to a separate utility module
+
+3. **Reduce Object Complexity**:
+   - Large nested objects can cause stack overflows during serialization
+   - Break down complex objects into simpler structures before returning
+
 ## Prevention Strategies
 
 To prevent stack size issues in the future:
