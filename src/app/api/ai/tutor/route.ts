@@ -13,11 +13,17 @@ export async function POST(req: Request) {
   try {
     console.log("[AI_TUTOR_REQUEST] New request received");
     
-    const { userId } = getAuth(req);
+    const { userId } = auth();
     
     if (!userId) {
       console.log("[AI_TUTOR_AUTH_ERROR] No authenticated user found");
       return new Response("Unauthorized", { status: 401 });
+    }
+    
+    const user = await currentUser();
+    if (!user) {
+      console.log("[AI_TUTOR_AUTH_ERROR] Failed to get user details");
+      return new Response("User not found", { status: 401 });
     }
     
     console.log(`[AI_TUTOR_AUTH] User authenticated: ${user.id}`);
