@@ -1,15 +1,4 @@
 {
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "installCommand": "npm install --legacy-peer-deps tailwindcss postcss autoprefixer",
-        "buildCommand": "npm run build",
-        "devCommand": "npm run dev"
-      }
-    }
-  ],
   "env": {
     "NODE_ENV": "production",
     "NEXT_PRIVATE_STANDALONE": "1",
