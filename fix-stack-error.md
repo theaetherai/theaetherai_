@@ -115,20 +115,23 @@ Our `vercel.json` now includes:
 {
   "functions": {
     "app/**/*.js": {
-      "memory": 3008
+      "memory": 1024,
+      "maxDuration": 60
     }
   },
   "buildCommand": "node --stack-size=4000 ./node_modules/.bin/next build",
   "env": {
-    "NODE_OPTIONS": "--max-old-space-size=3072"
+    "NODE_OPTIONS": "--max-old-space-size=1024"
   }
 }
 ```
 
 This configuration:
-- Increases memory for serverless functions to 3GB
+- Uses maximum allowed memory (1024 MB) for Hobby plan serverless functions
 - Uses a custom build command with increased stack size
 - Adds environment variables to optimize Node.js memory usage
+
+> **Note:** Vercel Hobby plans are limited to 1024 MB memory for serverless functions. If you need more memory for complex applications, consider upgrading to a Pro plan by creating a team.
 
 ## Prevention Strategies
 

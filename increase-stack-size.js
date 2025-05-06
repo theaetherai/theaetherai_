@@ -171,7 +171,7 @@ module.exports = nextConfig`
   }
 }
 
-// Create Vercel config with higher memory limit
+// Create Vercel config with appropriate memory limit
 function updateVercelConfig() {
   const vercelConfigPath = path.join(process.cwd(), 'vercel.json');
   
@@ -180,16 +180,21 @@ function updateVercelConfig() {
     try {
       const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf8'));
       
-      // Update function memory
+      // Update function memory - respect Hobby plan limits (1024 MB max)
       vercelConfig.functions = vercelConfig.functions || {};
       vercelConfig.functions["app/**/*.js"] = vercelConfig.functions["app/**/*.js"] || {};
-      vercelConfig.functions["app/**/*.js"].memory = 3008; // Max allowed memory
+      vercelConfig.functions["app/**/*.js"].memory = 1024; // Hobby plan limit
+      vercelConfig.functions["app/**/*.js"].maxDuration = 60;
       
       // Add build command with increased stack size
       vercelConfig.buildCommand = "node --stack-size=4000 ./node_modules/.bin/next build";
       
+      // Add NODE_OPTIONS environment variable
+      vercelConfig.env = vercelConfig.env || {};
+      vercelConfig.env.NODE_OPTIONS = "--max-old-space-size=1024";
+      
       fs.writeFileSync(vercelConfigPath, JSON.stringify(vercelConfig, null, 2));
-      console.log('✅ Updated vercel.json with increased memory and stack size');
+      console.log('✅ Updated vercel.json with optimized configuration for Hobby plan');
       return true;
     } catch (err) {
       console.error('❌ Failed to update vercel.json:', err.message);
@@ -200,19 +205,19 @@ function updateVercelConfig() {
     const vercelConfig = {
       "functions": {
         "app/**/*.js": {
-          "memory": 3008,
+          "memory": 1024, // Hobby plan limit
           "maxDuration": 60
         }
       },
       "buildCommand": "node --stack-size=4000 ./node_modules/.bin/next build",
       "env": {
-        "NODE_OPTIONS": "--max-old-space-size=3072"
+        "NODE_OPTIONS": "--max-old-space-size=1024"
       }
     };
     
     try {
       fs.writeFileSync(vercelConfigPath, JSON.stringify(vercelConfig, null, 2));
-      console.log('✅ Created vercel.json with increased memory and stack size');
+      console.log('✅ Created vercel.json with memory configuration for Hobby plan');
       return true;
     } catch (err) {
       console.error('❌ Failed to create vercel.json:', err.message);
