@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import OpenAI from "openai";
-import { client } from "../../../../lib/prisma";
+import { PrismaClient } from "@prisma/client";
+
+// Create a direct instance of PrismaClient to avoid circular dependencies
+const prisma = new PrismaClient();
 
 // Initialize OpenAI client with proper configuration
 // Use GROQ if available, fallback to OpenAI
@@ -227,7 +230,7 @@ export async function POST(req: Request) {
     
     // Log user interaction with AI tutor
     try {
-      await client.aiTutorInteraction.create({
+      await prisma.aiTutorInteraction.create({
         data: {
           userId: user.id,
           prompt: prompt,
@@ -249,5 +252,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ 
       error: error.message || "An unexpected error occurred",
     }, { status: 500 });
+  } finally {
+    // Make sure to disconnect Prisma to prevent connection leaks
+    await prisma.$disconnect();
   }
 } 

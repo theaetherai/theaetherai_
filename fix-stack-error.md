@@ -320,6 +320,48 @@ For video processing and other heavy computational tasks, we implemented a patte
 
 This approach is especially useful for Node.js serverless functions where you need to do heavy processing but want to avoid circular dependencies and stack size limitations.
 
+### 11. Case Study: Fixing /api/ai/tutor Route
+
+Another route that experienced a "Maximum call stack size exceeded" error was the `/api/ai/tutor` route, which provides AI tutoring functionality:
+
+1. **Problem Identification**:
+   - The route was importing a shared Prisma client from a central location
+   - This created potential circular dependencies with other imported modules
+
+2. **Solution Approach**:
+   - Created a direct instance of PrismaClient inside the route file
+   - Replaced the imported client with the local instance
+   - Added proper cleanup with prisma.$disconnect() in a finally block
+
+3. **Implementation Details**:
+   ```js
+   // BEFORE - problematic shared import
+   import { client } from "../../../../lib/prisma";
+   
+   // Using the shared client
+   await client.aiTutorInteraction.create({
+     // ...
+   });
+   
+   // AFTER - direct instance approach
+   import { PrismaClient } from "@prisma/client";
+   
+   // Create a direct instance for this route only
+   const prisma = new PrismaClient();
+   
+   try {
+     // Using the local client
+     await prisma.aiTutorInteraction.create({
+       // ...
+     });
+   } finally {
+     // Proper cleanup to prevent connection leaks
+     await prisma.$disconnect();
+   }
+   ```
+
+This pattern of using local database client instances has proven effective across multiple routes in the application, consistently resolving stack size exceeded errors.
+
 ## Prevention Strategies
 
 To prevent stack size issues in the future:
