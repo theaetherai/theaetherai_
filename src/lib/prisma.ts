@@ -1,7 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { retry } from '../lib/utils'
 
-// Create a singleton Prisma client instance
+// PrismaClient is attached to the `global` object in development to prevent
+// exhausting the database connection limit.
+// Learn more: https://pris.ly/d/help/next-js-best-practices
+
 const globalForPrisma = global as unknown as { 
   prisma: PrismaClient 
 }
@@ -10,10 +13,12 @@ const globalForPrisma = global as unknown as {
 const MAX_RETRIES = 3
 const RETRY_DELAY_MS = 1000 // Start with 1 second delay
 
-// Create client with or without logs based on environment
-export const client = globalForPrisma.prisma || new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-})
+export const client = globalForPrisma.prisma || 
+  new PrismaClient({
+    log: process.env.NODE_ENV === 'development' 
+      ? ['query', 'error', 'warn'] 
+      : ['error'],
+  })
 
 // Add connection resilience for deployment environments
 if (process.env.NODE_ENV !== 'development') {
@@ -38,6 +43,6 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 // Only set the global client in non-test environments
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV === 'development') {
   globalForPrisma.prisma = client
 }
