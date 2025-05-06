@@ -192,6 +192,57 @@ This typically means that specific route has a recursion or circular dependency 
    - Large nested objects can cause stack overflows during serialization
    - Break down complex objects into simpler structures before returning
 
+### 8. Case Study: Fixing /api/videos/completed Route
+
+We encountered and fixed a "Maximum call stack size exceeded" error in the `/api/videos/completed` route:
+
+1. **Problem Identification**:
+   - The route was importing the `processVideo` function from a shared library
+   - This created a circular dependency chain where the library was importing other modules that ultimately imported the route
+
+2. **Solution Approach**:
+   - Changed direct function import to a separate API call using `fetch()`
+   - Created a new `/api/videos/[id]/process` endpoint that handles video processing
+   - Used direct PrismaClient instances instead of shared client imports
+   - Simplified database queries to avoid nested connections and use direct ID assignments
+   - Made sure to properly disconnect Prisma clients to prevent connection leaks
+
+3. **Implementation Details**:
+   ```js
+   // BEFORE - problematic direct import
+   import { processVideo } from '../../../../lib/video-processing';
+   
+   // Process video
+   processVideo(video.id, url, userId);
+   
+   // AFTER - API-based approach
+   async function triggerVideoProcessing(videoId, url, userId) {
+     const response = await fetch(`/api/videos/${videoId}/process`, {
+       method: 'POST',
+       body: JSON.stringify({ url, userId }),
+     });
+   }
+   
+   // Trigger processing
+   triggerVideoProcessing(video.id, url, userId);
+   ```
+
+4. **Additional Improvements**:
+   - Replaced nested object relationships with direct ID assignments:
+   ```js
+   // BEFORE - using nested connections
+   videoData.User = {
+     connect: { id: userId }
+   };
+   
+   // AFTER - direct assignment
+   videoData.userId = userId;
+   ```
+   - Ensured database connections are properly closed with try/finally blocks
+   - Implemented proper error handling without circular dependencies
+
+This pattern of replacing direct imports with API calls can be applied to other routes experiencing similar stack size issues.
+
 ## Prevention Strategies
 
 To prevent stack size issues in the future:

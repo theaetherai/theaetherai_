@@ -1,6 +1,35 @@
-import { client } from '../../../../lib/prisma';
 import { NextResponse } from 'next/server';
-import { processVideo } from '../../../../lib/video-processing'; // We'll create this helper function
+import { PrismaClient } from '@prisma/client';
+
+// Create a direct instance of PrismaClient to avoid potential circular imports
+const prisma = new PrismaClient();
+
+// Separate function to process video - no imports
+async function triggerVideoProcessing(videoId: string, url: string, userId?: string) {
+  try {
+    // Instead of directly calling processVideo which might create circular dependencies,
+    // we'll make an internal API call to trigger processing
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000';
+      
+    // Schedule processing via fetch instead of direct function call
+    const response = await fetch(`${baseUrl}/api/videos/${videoId}/process`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url, userId }),
+    });
+    
+    if (!response.ok) {
+      console.warn(`Failed to schedule processing for video ${videoId}`);
+    }
+  } catch (processingError) {
+    console.error(`Failed to trigger processing for ${videoId}:`, processingError);
+    // Continue anyway - the video is saved in the database
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -21,28 +50,30 @@ export async function POST(request: Request) {
       );
     }
 
-    // Resolve user ID - find real user or use anonymous
+    // Resolve user ID with simplified query
     let effectiveUserId = userId;
     
     if (userId && userId !== 'anonymous') {
       try {
-        // Try to find the user by database ID first
-        const user = await client.user.findUnique({
-          where: { id: userId },
-          select: { id: true }
-        });
-        
-        if (user) {
-          effectiveUserId = user.id;
-        } else if (userId.startsWith('user_')) {
-          // Try by clerkId if it looks like a Clerk ID
-          const userByClerk = await client.user.findUnique({
+        // Simplified query - no nested selects
+        if (userId.startsWith('user_')) {
+          const userByClerk = await prisma.user.findUnique({
             where: { clerkid: userId },
             select: { id: true }
           });
           
           if (userByClerk) {
             effectiveUserId = userByClerk.id;
+          }
+        } else {
+          // Check by database ID
+          const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { id: true }
+          });
+          
+          if (user) {
+            effectiveUserId = user.id;
           }
         }
       } catch (err) {
@@ -56,58 +87,44 @@ export async function POST(request: Request) {
       ? videoId.split('/').pop() 
       : `video_${videoId}`;
     
-    // Create video entry - using the FULL URL as source
-    const videoData: any = {
+    // Prepare video data - simplified approach without nested objects
+    let videoData: any = {
       title,
-      source: url, // Store the full Cloudinary public URL
+      source: url,
       description: "Video upload via Cloudinary",
       processing: true,
     };
     
     // Add user connection if we have a valid user ID
     if (effectiveUserId && effectiveUserId !== 'anonymous') {
-      videoData.User = {
-        connect: { id: effectiveUserId }
-      };
+      videoData.userId = effectiveUserId; // Direct assignment instead of nested connect
     }
     
     // Add workspace if provided and valid
     if (workspaceId) {
       try {
-        // Verify workspace exists
-        const workspace = await client.workSpace.findUnique({
+        // Simplified workspace verification
+        const workspace = await prisma.workSpace.findUnique({
           where: { id: workspaceId },
           select: { id: true }
         });
         
         if (workspace) {
-          videoData.WorkSpace = {
-            connect: { id: workspaceId }
-          };
+          videoData.workspaceId = workspaceId; // Direct assignment
         }
       } catch (err) {
-        console.error('Error connecting to workspace:', err);
+        console.error('Error checking workspace:', err);
       }
     }
     
-    // Create the video record
-    const video = await client.video.create({
+    // Create the video record with simplified query
+    const video = await prisma.video.create({
       data: videoData
     });
 
-    // Start video processing in background
-    try {
-      // Call the processVideo function directly instead of using axios
-      // This runs the processing in the background without waiting for it to complete
-      processVideo(video.id, url, effectiveUserId).catch(error => {
-        console.error(`Background processing error for video ${video.id}:`, error);
-      });
-      
-      console.log('Video processing initiated for:', video.id);
-    } catch (processingError) {
-      console.warn('Failed to initiate processing:', processingError);
-      // Continue anyway - the video is saved in the database
-    }
+    // Trigger video processing in background using the separate function
+    triggerVideoProcessing(video.id, url, effectiveUserId);
+    console.log('Video processing triggered for:', video.id);
 
     return NextResponse.json({
       status: 200,
@@ -120,5 +137,8 @@ export async function POST(request: Request) {
       { status: 500, message: "Server error", details: error.message },
       { status: 500 }
     );
+  } finally {
+    // Disconnect Prisma client to prevent connection leaks
+    await prisma.$disconnect();
   }
 } 
