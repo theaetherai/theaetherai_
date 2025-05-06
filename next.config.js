@@ -57,6 +57,20 @@ const nextConfig = {
       '@': require('path').resolve(__dirname, './src'),
     };
 
+    // Force proper resolution of CSS modules
+    if (config.resolve.conditionNames) {
+      config.resolve.conditionNames.push('style');
+    }
+
+    // Ensure default config is applied for PostCSS
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      };
+    }
+
     return config;
   },
 }
