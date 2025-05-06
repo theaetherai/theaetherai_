@@ -25,7 +25,7 @@ export default async function CreateLessonPage({ params }: CreateLessonPageProps
 
   // Get current user
   const user = await currentUser()
-  if (!user) {
+  if (!userId) {
     return redirect('/auth/sign-in')
   }
 

@@ -8,9 +8,9 @@ export async function GET(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -105,9 +105,9 @@ export async function PATCH(
   try {
     console.log("[LESSON_UPDATE] Updating lesson:", params.lessonId);
     
-    const user = await currentUser();
+    const { userId } = getAuth(req);
 
-    if (!user) {
+    if (!userId) {
       console.log("[LESSON_UPDATE] Auth failed - no current user");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -358,9 +358,9 @@ export async function DELETE(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

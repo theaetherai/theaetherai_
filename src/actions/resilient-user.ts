@@ -16,7 +16,7 @@ export const resilientAuthenticateUser = async () => {
     const user = await resilientCurrentUser();
     
     // Step 2: If no user from Clerk, try local fallback
-    if (!user) {
+    if (!userId) {
       console.log("No Clerk user, checking local session...");
       const localSession = getLocalSession();
       

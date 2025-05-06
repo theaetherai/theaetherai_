@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs";
-import { db } from "../../../../../../lib/db";
+import { getAuth } from "@clerk/nextjs/server";
+import { client } from "../../../../../../lib/prisma";
 
 export async function POST(
   req: Request,
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     
-    if (!user) {
+    if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
     
@@ -21,8 +21,8 @@ export async function POST(
     }
     
     // Get the database user id from the auth id
-    const dbUser = await db.user.findUnique({
-      where: { clerkId: user.id }
+    const dbUser = await client.user.findUnique({
+      where: { clerkid: userId }
     });
     
     if (!dbUser) {
@@ -32,9 +32,9 @@ export async function POST(
     const lessonId = params.lessonId;
     
     // Get the lesson to make sure it exists and is a quiz
-    const lesson = await db.lesson.findUnique({
+    const lesson = await client.lesson.findUnique({
       where: { id: lessonId },
-      include: { section: { include: { course: true } } }
+      include: { section: true }
     });
     
     if (!lesson) {
@@ -46,7 +46,7 @@ export async function POST(
     }
     
     // Check if the user is enrolled in the course
-    const enrollment = await db.enrollment.findFirst({
+    const enrollment = await client.enrollment.findFirst({
       where: {
         userId: dbUser.id,
         courseId: lesson.section.courseId
@@ -58,7 +58,7 @@ export async function POST(
     }
     
     // Create a new quiz attempt
-    const quizAttempt = await db.quizAttempt.create({
+    const quizAttempt = await client.quizAttempt.create({
       data: {
         userId: dbUser.id,
         lessonId: lessonId,
@@ -70,7 +70,7 @@ export async function POST(
     });
     
     // Update user's progress for this lesson
-    await db.lessonProgress.upsert({
+    await client.lessonProgress.upsert({
       where: {
         userId_lessonId: {
           userId: dbUser.id,
@@ -93,22 +93,28 @@ export async function POST(
     
     // Update course progress
     // Count total lessons in the course
-    const totalLessons = await db.lesson.count({
+    const totalLessons = await client.lesson.count({
       where: {
-        section: {
-          courseId: lesson.section.courseId
+        sectionId: {
+          in: await client.section.findMany({
+            where: { courseId: lesson.section.courseId },
+            select: { id: true }
+          }).then(sections => sections.map(s => s.id))
         }
       }
     });
     
     // Count completed lessons
-    const completedLessons = await db.lessonProgress.count({
+    const completedLessons = await client.lessonProgress.count({
       where: {
         userId: dbUser.id,
         completed: true,
         lesson: {
-          section: {
-            courseId: lesson.section.courseId
+          sectionId: {
+            in: await client.section.findMany({
+              where: { courseId: lesson.section.courseId },
+              select: { id: true }
+            }).then(sections => sections.map(s => s.id))
           }
         }
       }
@@ -118,18 +124,17 @@ export async function POST(
     const courseProgress = Math.floor((completedLessons / totalLessons) * 100);
     
     // Update course enrollment with progress
-    await db.enrollment.update({
-      where: {
-        userId_courseId: {
-          userId: dbUser.id,
-          courseId: lesson.section.courseId
+    if (enrollment) {
+      await client.enrollment.update({
+        where: {
+          id: enrollment.id
+        },
+        data: {
+          progress: courseProgress,
+          completed: courseProgress === 100
         }
-      },
-      data: {
-        progress: courseProgress,
-        completed: courseProgress === 100
-      }
-    });
+      });
+    }
     
     return NextResponse.json({ 
       data: quizAttempt
@@ -145,17 +150,17 @@ export async function GET(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     const { searchParams } = new URL(req.url);
     const latest = searchParams.get("latest") === "true";
     
-    if (!user) {
+    if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
     
     // Get the database user id from the auth id
-    const dbUser = await db.user.findUnique({
-      where: { clerkId: user.id }
+    const dbUser = await client.user.findUnique({
+      where: { clerkid: userId }
     });
     
     if (!dbUser) {
@@ -166,7 +171,7 @@ export async function GET(
     
     if (latest) {
       // Get the latest attempt only
-      const latestAttempt = await db.quizAttempt.findFirst({
+      const latestAttempt = await client.quizAttempt.findFirst({
         where: {
           userId: dbUser.id,
           lessonId
@@ -181,7 +186,7 @@ export async function GET(
       }, { status: 200 });
     } else {
       // Get all attempts for this quiz
-      const attempts = await db.quizAttempt.findMany({
+      const attempts = await client.quizAttempt.findMany({
         where: {
           userId: dbUser.id,
           lessonId
@@ -206,17 +211,17 @@ export async function DELETE(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     const { searchParams } = new URL(req.url);
     const attemptId = searchParams.get("attemptId");
     
-    if (!user) {
+    if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
     
     // Get the database user id from the auth id
-    const dbUser = await db.user.findUnique({
-      where: { clerkId: user.id }
+    const dbUser = await client.user.findUnique({
+      where: { clerkid: userId }
     });
     
     if (!dbUser) {
@@ -226,16 +231,16 @@ export async function DELETE(
     const lessonId = params.lessonId;
     
     // Get the lesson to verify permissions
-    const lesson = await db.lesson.findUnique({
+    const lesson = await client.lesson.findUnique({
       where: { id: lessonId },
       include: { 
-        section: { 
-          include: { 
+        section: {
+          include: {
             course: {
               select: { userId: true }
-            } 
-          } 
-        } 
+            }
+          }
+        }
       }
     });
     
@@ -245,37 +250,49 @@ export async function DELETE(
     
     // If an attempt ID is provided, delete that specific attempt
     if (attemptId) {
-      const attempt = await db.quizAttempt.findUnique({
+      const attempt = await client.quizAttempt.findUnique({
         where: { id: attemptId }
       });
       
       if (!attempt) {
-        return new Response("Quiz attempt not found", { status: 404 });
+        return new Response("Attempt not found", { status: 404 });
       }
       
-      // Only the user who created the attempt or the course owner can delete it
-      if (attempt.userId !== dbUser.id && 
-          lesson.section.course.userId !== dbUser.id && 
-          !user.publicMetadata.isAdmin) {
+      // Only the quiz taker or course owner can delete an attempt
+      if (attempt.userId !== dbUser.id && lesson.section.course.userId !== dbUser.id) {
         return new Response("Not authorized to delete this attempt", { status: 403 });
       }
       
-      await db.quizAttempt.delete({
+      await client.quizAttempt.delete({
         where: { id: attemptId }
       });
+      
+      return NextResponse.json({ 
+        message: "Attempt deleted successfully"
+      }, { status: 200 });
     } else {
-      // Only course owner or admin can delete all attempts for a lesson
-      if (lesson.section.course.userId !== dbUser.id && !user.publicMetadata.isAdmin) {
-        return new Response("Not authorized to delete all attempts", { status: 403 });
+      // No specific attempt ID, delete all attempts for this user and lesson
+      
+      // Only the quiz taker or course owner can delete attempts
+      if (lesson.section.course.userId !== dbUser.id) {
+        // If not the course owner, can only delete their own attempts
+        await client.quizAttempt.deleteMany({
+          where: {
+            userId: dbUser.id,
+            lessonId
+          }
+        });
+      } else {
+        // Course owner can delete all attempts for the lesson
+        await client.quizAttempt.deleteMany({
+          where: { lessonId }
+        });
       }
       
-      // Delete all attempts for this lesson
-      await db.quizAttempt.deleteMany({
-        where: { lessonId }
-      });
+      return NextResponse.json({ 
+        message: "Attempts deleted successfully"
+      }, { status: 200 });
     }
-    
-    return new Response(null, { status: 204 });
   } catch (error) {
     console.error("[QUIZ_ATTEMPT_DELETE]", error);
     return new Response("Internal Server Error", { status: 500 });

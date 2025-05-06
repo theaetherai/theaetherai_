@@ -14,7 +14,7 @@ export default async function EditCoursePage({ params }: EditCoursePageProps) {
   console.log("Edit course page loading with courseId:", params.courseId);
   const user = await currentUser()
   
-  if (!user) {
+  if (!userId) {
     console.log("No authenticated user found, redirecting to sign-in");
     redirect('/auth/sign-in')
   }

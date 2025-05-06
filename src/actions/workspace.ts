@@ -11,7 +11,7 @@ import { OpenAI } from 'openai'
 export const verifyAccessToWorkspace = async (workspaceId: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 403 }
+    if (!userId) return { status: 403 }
 
     const isUserInWorkspace = await client.workSpace.findUnique({
       where: {
@@ -72,7 +72,7 @@ export const getWorkspaceFolders = async (workSpaceId: string) => {
 export const getAllUserVideos = async (workSpaceId: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     
     // Check if we're viewing a folder or the main workspace
     const isFolderView = await client.folder.findUnique({
@@ -136,7 +136,7 @@ export const getWorkSpaces = async () => {
   try {
     const user = await currentUser()
 
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
 
     const workspaces = await client.user.findUnique({
       where: {
@@ -180,7 +180,7 @@ export const getWorkSpaces = async () => {
 export const createWorkspace = async (name: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     const authorized = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -317,7 +317,7 @@ export const moveVideoLocation = async (
 export const getPreviewVideo = async (videoId: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     const video = await client.video.findUnique({
       where: {
         id: videoId,
@@ -363,7 +363,7 @@ export const getPreviewVideo = async (videoId: string) => {
 export const sendEmailForFirstView = async (videoId: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     const firstViewSettings = await client.user.findUnique({
       where: { clerkid: user.id },
       select: {
@@ -544,8 +544,8 @@ export const howToPost = async () => {
 export const generateVideoSummary = async (videoId: string) => {
   try {
     // Check if user is authenticated and has PRO plan
-    const user = await currentUser();
-    if (!user) return { status: 403, message: "Unauthorized" };
+    const { userId } = getAuth(req);
+    if (!userId) return { status: 403, message: "Unauthorized" };
 
     const userSubscription = await client.user.findUnique({
       where: { clerkid: user.id },

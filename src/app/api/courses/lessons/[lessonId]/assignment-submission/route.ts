@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs";
-import { db } from "../../../../../../lib/db";
+import { getAuth } from "@clerk/nextjs/server";
+import { client } from "../../../../../../lib/prisma";
 
 export async function POST(
   req: Request,
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     
-    if (!user) {
+    if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
     
@@ -21,8 +21,8 @@ export async function POST(
     }
     
     // Get the database user id from the auth id
-    const dbUser = await db.user.findUnique({
-      where: { clerkId: user.id }
+    const dbUser = await client.user.findUnique({
+      where: { clerkid: userId }
     });
     
     if (!dbUser) {
@@ -32,9 +32,9 @@ export async function POST(
     const lessonId = params.lessonId;
     
     // Get the lesson to make sure it exists and is an assignment
-    const lesson = await db.lesson.findUnique({
+    const lesson = await client.lesson.findUnique({
       where: { id: lessonId },
-      include: { section: { include: { course: true } } }
+      include: { section: true }
     });
     
     if (!lesson) {
@@ -46,10 +46,10 @@ export async function POST(
     }
     
     // Check if the user is enrolled in the course
-    const enrollment = await db.enrollment.findFirst({
+    const enrollment = await client.enrollment.findFirst({
       where: {
         userId: dbUser.id,
-        courseId: lesson.section.courseId
+        courseId: lesson.section?.courseId
       }
     });
     
@@ -58,7 +58,7 @@ export async function POST(
     }
     
     // Check if there's an existing submission
-    const existingSubmission = await db.assignmentSubmission.findFirst({
+    const existingSubmission = await client.assignmentSubmission.findFirst({
       where: {
         userId: dbUser.id,
         lessonId: lessonId
@@ -74,7 +74,7 @@ export async function POST(
       }
       
       // Update existing submission
-      submission = await db.assignmentSubmission.update({
+      submission = await client.assignmentSubmission.update({
         where: { id: existingSubmission.id },
         data: {
           content,
@@ -87,7 +87,7 @@ export async function POST(
       });
     } else {
       // Create a new submission
-      submission = await db.assignmentSubmission.create({
+      submission = await client.assignmentSubmission.create({
         data: {
           userId: dbUser.id,
           lessonId: lessonId,
@@ -100,7 +100,7 @@ export async function POST(
     }
     
     // Update user's progress for this lesson
-    await db.lessonProgress.upsert({
+    await client.lessonProgress.upsert({
       where: {
         userId_lessonId: {
           userId: dbUser.id,
@@ -123,22 +123,28 @@ export async function POST(
     
     // Update course progress
     // Count total lessons in the course
-    const totalLessons = await db.lesson.count({
+    const totalLessons = await client.lesson.count({
       where: {
-        section: {
-          courseId: lesson.section.courseId
+        sectionId: {
+          in: await client.section.findMany({
+            where: { courseId: lesson.section?.courseId },
+            select: { id: true }
+          }).then(sections => sections.map(s => s.id))
         }
       }
     });
     
     // Count completed lessons
-    const completedLessons = await db.lessonProgress.count({
+    const completedLessons = await client.lessonProgress.count({
       where: {
         userId: dbUser.id,
         completed: true,
         lesson: {
-          section: {
-            courseId: lesson.section.courseId
+          sectionId: {
+            in: await client.section.findMany({
+              where: { courseId: lesson.section?.courseId },
+              select: { id: true }
+            }).then(sections => sections.map(s => s.id))
           }
         }
       }
@@ -148,18 +154,16 @@ export async function POST(
     const courseProgress = Math.floor((completedLessons / totalLessons) * 100);
     
     // Update course enrollment with progress
-    await db.enrollment.update({
-      where: {
-        userId_courseId: {
-          userId: dbUser.id,
-          courseId: lesson.section.courseId
+    if (enrollment) {
+      await client.enrollment.update({
+        where: {
+          id: enrollment.id
+        },
+        data: {
+          completed: courseProgress === 100
         }
-      },
-      data: {
-        progress: courseProgress,
-        completed: courseProgress === 100
-      }
-    });
+      });
+    }
     
     return NextResponse.json({ 
       data: submission
@@ -175,15 +179,15 @@ export async function GET(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     
-    if (!user) {
+    if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
     
     // Get the database user id from the auth id
-    const dbUser = await db.user.findUnique({
-      where: { clerkId: user.id }
+    const dbUser = await client.user.findUnique({
+      where: { clerkid: userId }
     });
     
     if (!dbUser) {
@@ -193,7 +197,7 @@ export async function GET(
     const lessonId = params.lessonId;
     
     // Get submission for this assignment
-    const submission = await db.assignmentSubmission.findFirst({
+    const submission = await client.assignmentSubmission.findFirst({
       where: {
         userId: dbUser.id,
         lessonId
@@ -221,17 +225,17 @@ export async function DELETE(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const user = await currentUser();
+    const { userId } = getAuth(req);
     const { searchParams } = new URL(req.url);
     const submissionId = searchParams.get("submissionId");
     
-    if (!user) {
+    if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
     
     // Get the database user id from the auth id
-    const dbUser = await db.user.findUnique({
-      where: { clerkId: user.id }
+    const dbUser = await client.user.findUnique({
+      where: { clerkid: userId }
     });
     
     if (!dbUser) {
@@ -241,16 +245,16 @@ export async function DELETE(
     const lessonId = params.lessonId;
     
     // Get the lesson to verify permissions
-    const lesson = await db.lesson.findUnique({
+    const lesson = await client.lesson.findUnique({
       where: { id: lessonId },
       include: { 
-        section: { 
-          include: { 
+        section: {
+          include: {
             course: {
               select: { userId: true }
-            } 
-          } 
-        } 
+            }
+          }
+        }
       }
     });
     
@@ -260,7 +264,7 @@ export async function DELETE(
     
     // If a submission ID is provided, delete that specific submission
     if (submissionId) {
-      const submission = await db.assignmentSubmission.findUnique({
+      const submission = await client.assignmentSubmission.findUnique({
         where: { id: submissionId }
       });
       
@@ -268,37 +272,35 @@ export async function DELETE(
         return new Response("Submission not found", { status: 404 });
       }
       
-      // Only the user who created the submission, the course owner, or an admin can delete it
+      // Only the submission owner or course owner can delete a submission
       if (submission.userId !== dbUser.id && 
-          lesson.section.course.userId !== dbUser.id && 
-          !user.publicMetadata.isAdmin) {
+          lesson.section?.course?.userId !== dbUser.id) {
         return new Response("Not authorized to delete this submission", { status: 403 });
       }
       
-      // Do not allow deleting graded submissions
-      if (submission.status === 'graded' && 
-          submission.userId === dbUser.id && 
-          lesson.section.course.userId !== dbUser.id && 
-          !user.publicMetadata.isAdmin) {
-        return new Response("Cannot delete a graded submission", { status: 400 });
-      }
-      
-      await db.assignmentSubmission.delete({
+      await client.assignmentSubmission.delete({
         where: { id: submissionId }
       });
+      
+      return NextResponse.json({
+        message: "Submission deleted"
+      }, { status: 200 });
     } else {
-      // Only course owner or admin can delete all submissions for a lesson
-      if (lesson.section.course.userId !== dbUser.id && !user.publicMetadata.isAdmin) {
+      // No specific submission ID, delete all submissions for this user and lesson
+      
+      // Only the course owner can delete all submissions
+      if (lesson.section?.course?.userId !== dbUser.id) {
         return new Response("Not authorized to delete all submissions", { status: 403 });
       }
       
-      // Delete all submissions for this lesson
-      await db.assignmentSubmission.deleteMany({
+      await client.assignmentSubmission.deleteMany({
         where: { lessonId }
       });
+      
+      return NextResponse.json({
+        message: "All submissions deleted"
+      }, { status: 200 });
     }
-    
-    return new Response(null, { status: 204 });
   } catch (error) {
     console.error("[ASSIGNMENT_SUBMISSION_DELETE]", error);
     return new Response("Internal Server Error", { status: 500 });

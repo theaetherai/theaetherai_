@@ -9,7 +9,7 @@ export async function POST(
   try {
     const user = await currentUser()
     
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -106,7 +106,7 @@ export async function GET(
   try {
     const user = await currentUser()
     
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

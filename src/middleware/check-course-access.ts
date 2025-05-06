@@ -25,7 +25,7 @@ export async function checkCourseAccess({ courseId, requiredAccess }: CheckCours
   try {
     // Get current user
     const user = await currentUser()
-    if (!user) {
+    if (!userId) {
       return {
         isAuthorized: false,
         message: "Unauthorized",

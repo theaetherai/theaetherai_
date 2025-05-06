@@ -25,7 +25,7 @@ const Home = async ({ params }: Props) => {
 
   // Get current user
   const user = await currentUser()
-  if (!user) {
+  if (!userId) {
     return redirect('/auth/sign-in')
   }
 

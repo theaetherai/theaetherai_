@@ -17,7 +17,7 @@ const LessonPage = async ({ params }: LessonPageProps) => {
     // Use our safer authentication function
     const user = await safeCurrentUser();
     
-    if (!user) {
+    if (!userId) {
       console.log("No authenticated user found, checking for session cookies");
       
       // As a fallback, check if we have session cookies even if Clerk API failed

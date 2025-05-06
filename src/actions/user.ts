@@ -40,7 +40,7 @@ export const onAuthenticateUser = async () => {
   try {
     const user = await currentUser()
     
-    if (!user) {
+    if (!userId) {
       return { status: 403 }
     }
 
@@ -113,7 +113,7 @@ export const getNotifications = async () => {
   
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     const notifications = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -142,7 +142,7 @@ export const searchUsers = async (query: string) => {
   
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
 
     const users = await client.user.findMany({
       where: {
@@ -180,7 +180,7 @@ export const searchUsers = async (query: string) => {
 export const getPaymentInfo = async () => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
 
     const payment = await client.user.findUnique({
       where: {
@@ -204,7 +204,7 @@ export const enableFirstView = async (state: boolean) => {
   try {
     const user = await currentUser()
 
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
 
     const view = await client.user.update({
       where: {
@@ -226,7 +226,7 @@ export const enableFirstView = async (state: boolean) => {
 export const getFirstView = async () => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     const userData = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -306,7 +306,7 @@ export const getUserProfile = async () => {
       }) as ClerkUser | null;
     
     // Handle no user case
-    if (!user) {
+    if (!userId) {
       console.log('No user found in getUserProfile');
       return { 
         status: 404,
@@ -390,7 +390,7 @@ export const inviteMembers = async (
 ) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
     const senderInfo = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -466,7 +466,7 @@ export const inviteMembers = async (
 export const acceptInvite = async (inviteId: string) => {
   try {
     const user = await currentUser()
-    if (!user)
+    if (!userId)
       return {
         status: 404,
       }
@@ -524,7 +524,7 @@ export const acceptInvite = async (inviteId: string) => {
 export const completeSubscription = async (session_id: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
+    if (!userId) return { status: 404 }
 
     const session = await stripe.checkout.sessions.retrieve(session_id)
     if (session) {

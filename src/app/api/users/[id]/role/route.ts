@@ -9,7 +9,7 @@ export async function PATCH(
 ) {
   try {
     const user = await currentUser()
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { status: 401, message: 'Unauthorized' },
         { status: 401 }
