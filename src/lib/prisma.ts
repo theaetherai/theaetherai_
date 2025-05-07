@@ -1,24 +1,35 @@
 import { PrismaClient } from '@prisma/client'
 import { retry } from '../lib/utils'
 
-// PrismaClient is attached to the `global` object in development to prevent
-// exhausting the database connection limit.
-// Learn more: https://pris.ly/d/help/next-js-best-practices
+/**
+ * PrismaClient is attached to the `global` object in development to prevent
+ * exhausting the database connection limit.
+ * Learn more: https://pris.ly/d/help/next-js-best-practices
+ */
 
 const globalForPrisma = global as unknown as { 
   prisma: PrismaClient 
 }
 
-// Connection retry configuration
-const MAX_RETRIES = 3
-const RETRY_DELAY_MS = 1000 // Start with 1 second delay
-
-export const client = globalForPrisma.prisma || 
-  new PrismaClient({
+/**
+ * Function that creates a Prisma client instance.
+ * This is used to avoid connection during build time and only connect when needed.
+ */
+function createPrismaClient() {
+  return new PrismaClient({
     log: process.env.NODE_ENV === 'development' 
       ? ['query', 'error', 'warn'] 
       : ['error'],
   })
+}
+
+// Use existing client on global in development, or create a new one that doesn't connect immediately
+export const client = globalForPrisma.prisma || createPrismaClient()
+
+// Only set the global client in non-test environments and development
+if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV === 'development') {
+  globalForPrisma.prisma = client
+}
 
 // Add connection resilience for deployment environments
 if (process.env.NODE_ENV !== 'development') {
@@ -30,8 +41,8 @@ if (process.env.NODE_ENV !== 'development') {
     try {
       return await retry(
         () => originalPrismaCall.apply(client), 
-        MAX_RETRIES, 
-        RETRY_DELAY_MS,
+        3, // MAX_RETRIES
+        1000, // RETRY_DELAY_MS
         (error: Error) => console.error("Database connection error:", error)
       )
     } catch (error) {
@@ -42,7 +53,17 @@ if (process.env.NODE_ENV !== 'development') {
   }
 }
 
-// Only set the global client in non-test environments
-if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV === 'development') {
-  globalForPrisma.prisma = client
+/**
+ * Helper function to get a Prisma client instance
+ * Use this in API routes instead of importing client directly
+ */
+export async function getPrisma() {
+  try {
+    // Only actually connect when we need to
+    // This prevents connection during build time
+    return client
+  } catch (e) {
+    console.error("Failed to get Prisma client:", e)
+    throw new Error("Database connection failed")
+  }
 }

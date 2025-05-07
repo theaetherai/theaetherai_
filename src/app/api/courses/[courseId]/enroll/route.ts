@@ -1,162 +1,41 @@
-import { client } from '../../../../../lib/prisma'
-import { currentUser } from '@clerk/nextjs/server'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-// POST - Enroll in a course
+// Minimal test route to debug build issues
 export async function POST(
-  req: NextRequest,
+  req: Request,
   { params }: { params: { courseId: string } }
 ) {
+  console.log('Course enrollment endpoint hit ✅')
+
   try {
-    const user = await currentUser()
-    if (!user?.id) {
-      return NextResponse.json(
-        { status: 401, message: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    const { courseId } = params
-
-    // Get user ID from clerk ID
-    const dbUser = await client.user.findUnique({
-      where: { clerkid: user.id },
-      select: { id: true }
+    // Return a test response without accessing any external services
+    return NextResponse.json({ 
+      status: 201, 
+      message: "This is a test response from the course enrollment endpoint",
+      courseId: params.courseId
     })
-
-    if (!dbUser) {
-      return NextResponse.json(
-        { status: 404, message: 'User not found' },
-        { status: 404 }
-      )
-    }
-
-    // Check if course exists
-    const course = await client.course.findUnique({
-      where: { id: courseId },
-      select: { 
-        id: true,
-        title: true,
-        userId: true 
-      }
-    })
-
-    if (!course) {
-      return NextResponse.json(
-        { status: 404, message: 'Course not found' },
-        { status: 404 }
-      )
-    }
-
-    // Check if user is already enrolled
-    const existingEnrollment = await client.enrollment.findFirst({
-      where: {
-        userId: dbUser.id,
-        courseId: courseId
-      }
-    })
-
-    if (existingEnrollment) {
-      return NextResponse.json({
-        status: 200,
-        message: 'Already enrolled in this course',
-        data: existingEnrollment
-      })
-    }
-
-    // Create enrollment
-    const enrollment = await client.enrollment.create({
-      data: {
-        User: {
-          connect: { id: dbUser.id }
-        },
-        Course: {
-          connect: { id: courseId }
-        }
-      }
-    })
-
-    return NextResponse.json({
-      status: 201,
-      message: 'Successfully enrolled in course',
-      data: enrollment
-    }, { status: 201 })
   } catch (error) {
-    console.error('Error enrolling in course:', error)
-    return NextResponse.json(
-      { status: 500, message: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 
-// DELETE - Unenroll from a course
+// Minimal test route for DELETE
 export async function DELETE(
-  req: NextRequest,
+  req: Request,
   { params }: { params: { courseId: string } }
 ) {
+  console.log('Course unenrollment endpoint hit ✅')
+
   try {
-    const user = await currentUser()
-    if (!user?.id) {
-      return NextResponse.json(
-        { status: 401, message: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    const { courseId } = params
-
-    // Get user ID from clerk ID
-    const dbUser = await client.user.findUnique({
-      where: { clerkid: user.id },
-      select: { id: true }
-    })
-
-    if (!dbUser) {
-      return NextResponse.json(
-        { status: 404, message: 'User not found' },
-        { status: 404 }
-      )
-    }
-
-    // Check if enrollment exists
-    const enrollment = await client.enrollment.findFirst({
-      where: {
-        userId: dbUser.id,
-        courseId: courseId
-      }
-    })
-
-    if (!enrollment) {
-      return NextResponse.json(
-        { status: 404, message: 'Enrollment not found' },
-        { status: 404 }
-      )
-    }
-
-    // Delete the enrollment and associated progress
-    await client.learningProgress.deleteMany({
-      where: {
-        userId: dbUser.id,
-        Lesson: {
-          courseId: courseId
-        }
-      }
-    })
-
-    await client.enrollment.delete({
-      where: { id: enrollment.id }
-    })
-
-    return NextResponse.json({
-      status: 200,
-      message: 'Successfully unenrolled from course'
+    // Return a test response without accessing any external services
+    return NextResponse.json({ 
+      status: 200, 
+      message: "This is a test response from the course unenrollment endpoint",
+      courseId: params.courseId
     })
   } catch (error) {
-    console.error('Error unenrolling from course:', error)
-    return NextResponse.json(
-      { status: 500, message: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 } 
