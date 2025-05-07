@@ -71,14 +71,12 @@ const nextConfig = {
   },
   // Transpile specific modules that need it, but not all node_modules 
   transpilePackages: [],
-  // Set output to export for static site generation, but allow dynamic features
-  output: 'export',
   // Configure routes that cannot be exported statically
   unstable_skipTrailingSlashRedirect: true,
   // Skip type checking to prevent issues during build
   skipMiddlewareUrlNormalize: true,
-  // This ensures pages with unstable_noStore() are handled properly
-  distDir: process.env.NODE_ENV === 'development' ? '.next' : 'out',
+  // Using .next directory for all environments since we're not using static export
+  distDir: '.next',
   webpack: (config, { isServer }) => {
     // Add module alias resolution for better path handling
     config.resolve.fallback = { 
