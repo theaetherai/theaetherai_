@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import OpenAI from "openai";
 import { client } from "../../../../lib/prisma"; // Use the shared client instance
 
@@ -99,40 +98,49 @@ function buildSystemPrompt(context: string, instructions?: string, rubric?: any[
 
 // Main API handler - kept as minimal as possible
 export async function POST(req: Request) {
-  // Check authentication early - use proper auth() first
-  const { userId } = auth();
-  
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    // Get user information only when needed
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 401 });
+    // Check for required env vars
+    if (!process.env.OPEN_AI_KEY) {
+      console.error("OPEN_AI_KEY is not set");
+      return NextResponse.json({ error: "OPEN_AI_KEY is not set" }, { status: 500 });
     }
-    
-    // Parse request body with minimal error handling
-    const body = await req.json().catch(() => ({}));
+
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    let user;
+    try {
+      user = await currentUser();
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 401 });
+      }
+    } catch (clerkError) {
+      console.error("Clerk Error:", clerkError);
+      return NextResponse.json({ error: "Auth error" }, { status: 500 });
+    }
+
+    let body;
+    try {
+      body = await req.json();
+    } catch (err) {
+      console.error("Failed to parse JSON body:", err);
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+
     const { prompt, context = "general", instructions, rubric } = body;
-    
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
-    
-    // Generate AI response with minimal logic
+
+    let response = "";
     try {
-      // Get OpenAI client on demand
-      const openai = getOpenAIClient();
-      const model = getAIModel();
-      
-      // Build prompt in a separate function
+      const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
+      // Build system prompt as before
       const systemPrompt = buildSystemPrompt(context, instructions, rubric);
-      
-      // Generate completion with minimal options
       const chatCompletion = await openai.chat.completions.create({
-        model,
+        model: "gpt-3.5-turbo",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: prompt }
@@ -140,40 +148,29 @@ export async function POST(req: Request) {
         temperature: 0.7,
         max_tokens: 1500
       });
-      
-      const response = chatCompletion.choices[0].message.content || '';
-      
-      // Log interaction with minimal fields
-      try {
-        await client.aiTutorInteraction.create({
-          data: {
-            userId: user.id,
-            prompt: prompt.substring(0, 1000), // Limit length to avoid issues
-            response: response.substring(0, 1000), // Limit length to avoid issues
-            context: context || 'general',
-          }
-        });
-      } catch (dbError) {
-        // Ignore logging errors
-        console.error("DB Error:", dbError);
-      }
-      
-      // Return response with minimal processing
-      return NextResponse.json({ response });
-      
-    } catch (aiError: any) {
+      response = chatCompletion.choices[0].message.content || '';
+    } catch (aiError) {
       console.error("AI Error:", aiError);
-      // Handle AI errors with minimal processing
-      return NextResponse.json({ 
-        error: "AI processing error"
-      }, { status: 502 });
+      return NextResponse.json({ error: "AI processing error" }, { status: 502 });
     }
-    
-  } catch (error: any) {
-    console.error("Server Error:", error);
-    // Minimal error handling
-    return NextResponse.json({ 
-      error: "Server error"
-    }, { status: 500 });
+
+    try {
+      await client.aiTutorInteraction.create({
+        data: {
+          userId: user.id,
+          prompt: prompt.substring(0, 1000),
+          response: response.substring(0, 1000),
+          context: context || 'general',
+        }
+      });
+    } catch (dbError) {
+      console.error("DB Error:", dbError);
+      // Don't fail the request if logging fails
+    }
+
+    return NextResponse.json({ response });
+  } catch (error) {
+    console.error("Server Error in /api/ai/tutor:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 } 
