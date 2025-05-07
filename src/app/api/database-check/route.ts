@@ -1,31 +1,19 @@
-import { NextResponse } from 'next/server';
-import { client } from '../../../lib/prisma';
+﻿import { NextResponse } from "next/server"
 
-export async function GET() {
+function isValidUUID(uuid: string | undefined) {
+  return typeof uuid === 'string' && /^[0-9a-fA-F-]{36}$/.test(uuid)
+}
+export async function GET(req: Request) {
+  console.log(API endpoint hit: GET C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\database-check\route.ts)
+  
   try {
-    // Try a simple database query
-    await client.$connect();
-    
-    // Run a simple query to verify database is working
-    // Just count users which is a lightweight operation
-    await client.user.count();
-    
     return NextResponse.json({ 
-      status: 'ok',
-      message: 'Database connection successful',
-      timestamp: new Date().toISOString()
-    });
+      status: 200, 
+      message: "This is a test response from C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\database-check\route.ts"
+    })
   } catch (error) {
-    console.error('Database verification failed:', error);
-    
-    // Return 503 Service Unavailable for database connection issues
-    return NextResponse.json({ 
-      status: 'error',
-      message: 'Database connection failed',
-      timestamp: new Date().toISOString()
-    }, { status: 503 });
-  } finally {
-    // Always disconnect after checking
-    await client.$disconnect().catch(console.error);
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
-} 
+}
+

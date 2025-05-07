@@ -1,29 +1,33 @@
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from "next/server"
 
-export async function GET() {
-  const cookieStore = cookies()
-  const currentMode = cookieStore.get('auth_mode')?.value
+function isValidUUID(uuid: string | undefined) {
+  return typeof uuid === 'string' && /^[0-9a-fA-F-]{36}$/.test(uuid)
+}
+export async function GET(req: Request) {
+  console.log(API endpoint hit: GET C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\toggle-resilient-auth\route.ts)
   
-  // Toggle between modes or default to resilient if not set
-  const newMode = currentMode === 'resilient' ? 'standard' : 'resilient'
+  try {
+    return NextResponse.json({ 
+      status: 200, 
+      message: "This is a test response from C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\toggle-resilient-auth\route.ts"
+    })
+  } catch (error) {
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
+}
+export async function POST(req: Request) {
+  console.log(API endpoint hit: POST C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\toggle-resilient-auth\route.ts)
   
-  // Set cookie with the new mode
-  cookieStore.set('auth_mode', newMode, {
-    path: '/',
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-  })
-  
-  return NextResponse.json({ 
-    success: true, 
-    mode: newMode,
-    message: `Authentication mode set to ${newMode}`
-  })
+  try {
+    return NextResponse.json({ 
+      status: 201, 
+      message: "This is a test response from C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\toggle-resilient-auth\route.ts",
+      data: { id: "new-item", createdAt: new Date().toISOString() }
+    })
+  } catch (error) {
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
 }
 
-export async function POST() {
-  // Also handle POST for compatibility
-  return GET()
-} 

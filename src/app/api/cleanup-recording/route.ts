@@ -1,36 +1,20 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from "next/server"
 
-export async function POST(request: Request) {
+function isValidUUID(uuid: string | undefined) {
+  return typeof uuid === 'string' && /^[0-9a-fA-F-]{36}$/.test(uuid)
+}
+export async function POST(req: Request) {
+  console.log(API endpoint hit: POST C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\cleanup-recording\route.ts)
+  
   try {
-    // Parse request body
-    let body;
-    try {
-      body = await request.json();
-    } catch (error) {
-      console.error('Error parsing request body:', error);
-      body = {};
-    }
-
-    const { recordingId, filename, userId, workspaceId } = body;
-
-    // Log the cleanup completion
-    console.log(`Alternative cleanup endpoint called for:`, {
-      recordingId,
-      filename,
-      userId,
-      workspaceId
-    });
-
-    // Very simple response with no dependencies
-    return NextResponse.json(
-      { success: true, message: 'Cleanup acknowledged via alternative endpoint' },
-      { status: 200 }
-    );
+    return NextResponse.json({ 
+      status: 201, 
+      message: "This is a test response from C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\cleanup-recording\route.ts",
+      data: { id: "new-item", createdAt: new Date().toISOString() }
+    })
   } catch (error) {
-    console.error('Error in alternative cleanup endpoint:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
-} 
+}
+

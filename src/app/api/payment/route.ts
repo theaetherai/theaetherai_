@@ -1,33 +1,19 @@
-import { currentUser } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
+﻿import { NextResponse } from "next/server"
 
-const stripe = new Stripe(process.env.STRIPE_CLIENT_SECRET as string)
-
-export async function GET() {
-  console.log(process.env.STRIPE_CLIENT_SECRET, 'GEt endpoint hit👉🏻')
-  const user = await currentUser()
-  if (!user?.id) return NextResponse.json({ status: 404 })
-  const priceId = process.env.STRIPE_SUBSCRIPTION_PRICE_ID
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    line_items: [
-      {
-        price: priceId,
-        quantity: 1,
-      },
-    ],
-    success_url: `${process.env.NEXT_PUBLIC_HOST_URL}/payment?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_HOST_URL}/payment?cancel=true`,
-  })
-
-  if (session) {
-    return NextResponse.json({
-      status: 200,
-      session_url: session.url,
-      customer_id: session.customer,
-    })
-  }
-
-  return NextResponse.json({ status: 400 })
+function isValidUUID(uuid: string | undefined) {
+  return typeof uuid === 'string' && /^[0-9a-fA-F-]{36}$/.test(uuid)
 }
+export async function GET(req: Request) {
+  console.log(API endpoint hit: GET C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\payment\route.ts)
+  
+  try {
+    return NextResponse.json({ 
+      status: 200, 
+      message: "This is a test response from C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\payment\route.ts"
+    })
+  } catch (error) {
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
+}
+

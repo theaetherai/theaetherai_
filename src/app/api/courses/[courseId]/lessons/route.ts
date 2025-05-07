@@ -1,252 +1,70 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "../../../../../lib/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
 
-// GET all lessons for a course
+function isValidUUID(uuid: string | undefined) {
+  return typeof uuid === 'string' && /^[0-9a-fA-F-]{36}$/.test(uuid)
+}
+
+// Minimal test route for GET
 export async function GET(
-  req: NextRequest,
+  req: Request,
   { params }: { params: { courseId: string } }
 ) {
+  const { courseId } = params
+  console.log(`Course lessons GET endpoint hit ✅ courseId=${courseId}`)
+  
   try {
-    console.log("GET lessons endpoint called")
-    const user = await currentUser()
-    console.log("Current user:", user ? "authenticated" : "not authenticated")
-    
-    if (!user?.id) {
+    if (!isValidUUID(courseId)) {
       return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
+        { error: `Invalid courseId: '${courseId}'` },
+        { status: 400 }
       )
     }
     
-    const courseId = params.courseId
-    
-    // Get user ID from database
-    const dbUser = await prisma.user.findUnique({
-      where: { 
-        clerkid: user.id 
-      },
-      select: {
-        id: true
-      }
+    // Return a test response without accessing any external services
+    return NextResponse.json({ 
+      status: 200, 
+      message: "This is a test response from the course lessons GET endpoint",
+      courseId,
+      data: [
+        { id: "test-lesson-1", title: "Test Lesson 1" },
+        { id: "test-lesson-2", title: "Test Lesson 2" }
+      ]
     })
-    
-    if (!dbUser) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
-    }
-    
-    // Verify course exists
-    const course = await prisma.course.findUnique({
-      where: {
-        id: courseId
-      }
-    })
-    
-    if (!course) {
-      return NextResponse.json(
-        { error: "Course not found" },
-        { status: 404 }
-      )
-    }
-    
-    // Check if user is owner or enrolled
-    const isOwner = course.userId === dbUser.id
-    
-    if (!isOwner) {
-      const enrollment = await prisma.enrollment.findFirst({
-        where: {
-          courseId,
-          userId: dbUser.id
-        }
-      })
-      
-      if (!enrollment) {
-        return NextResponse.json(
-          { error: "Access denied" },
-          { status: 403 }
-        )
-      }
-    }
-    
-    // Get all lessons for the course
-    const lessons = await prisma.lesson.findMany({
-      where: {
-        section: {
-          courseId
-        }
-      },
-      orderBy: {
-        order: "asc"
-      },
-      include: {
-        section: {
-          select: {
-            title: true,
-            order: true
-          }
-        }
-      }
-    })
-    
-    return NextResponse.json(
-      { 
-        status: 200,
-        data: lessons 
-      },
-      { status: 200 }
-    )
   } catch (error) {
-    console.error("Error fetching lessons:", error)
-    return NextResponse.json(
-      { error: "Failed to fetch lessons" },
-      { status: 500 }
-    )
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 
-// POST - Create a new lesson
+// Minimal test route for POST
 export async function POST(
-  req: NextRequest,
+  req: Request,
   { params }: { params: { courseId: string } }
 ) {
+  const { courseId } = params
+  console.log(`Course lessons POST endpoint hit ✅ courseId=${courseId}`)
+  
   try {
-    console.log("POST lesson endpoint called")
-    const user = await currentUser()
-    console.log("Current user:", user ? "authenticated" : "not authenticated")
-    
-    if (!user?.id) {
+    if (!isValidUUID(courseId)) {
       return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
+        { error: `Invalid courseId: '${courseId}'` },
+        { status: 400 }
       )
     }
     
-    const courseId = params.courseId
-    console.log("Course ID:", courseId)
-    
-    // Get user ID from database
-    const dbUser = await prisma.user.findUnique({
-      where: { 
-        clerkid: user.id 
-      },
-      select: {
-        id: true
+    // Return a test response without accessing any external services
+    return NextResponse.json({ 
+      status: 201, 
+      message: "This is a test response from the course lessons POST endpoint",
+      courseId,
+      data: { 
+        id: "new-test-lesson", 
+        title: "New Test Lesson", 
+        createdAt: new Date().toISOString() 
       }
     })
-    
-    if (!dbUser) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
-    }
-    
-    // Verify course exists and belongs to the user
-    const course = await prisma.course.findUnique({
-      where: {
-        id: courseId,
-        userId: dbUser.id
-      }
-    })
-    
-    if (!course) {
-      console.log("Course not found or access denied")
-      return NextResponse.json(
-        { error: "Course not found or access denied" },
-        { status: 404 }
-      )
-    }
-    
-    const body = await req.json()
-    console.log("Request body:", body)
-    const { 
-      title, 
-      content, 
-      sectionId, 
-      duration, 
-      videoId, 
-      type = "text", 
-      previewable = false,
-      questions,
-      passingScore,
-      timeLimit,
-      rubric,
-      dueDate,
-      fileTypes,
-      maxFileSize,
-      maxFiles
-    } = body
-    
-    // Get the highest order for the section
-    const highestOrderLesson = await prisma.lesson.findFirst({
-      where: {
-        sectionId
-      },
-      orderBy: {
-        order: "desc"
-      },
-      select: {
-        order: true
-      }
-    })
-    
-    const newOrder = highestOrderLesson ? highestOrderLesson.order + 1 : 1
-    console.log("New lesson order:", newOrder)
-    
-    // Create a new lesson with proper type handling
-    const lessonData: any = {
-        title,
-        content,
-        sectionId,
-        duration,
-        order: newOrder,
-      previewable,
-      type, // Use the type from the request
-      courseId
-    };
-
-    // Add type-specific fields if they exist
-    if (videoId) lessonData.videoId = videoId;
-    
-    // Add quiz-specific fields if this is a quiz
-    if (type === "quiz") {
-      if (questions) lessonData.questions = Array.isArray(questions) ? JSON.stringify(questions) : questions;
-      if (passingScore) lessonData.passingScore = passingScore;
-      if (timeLimit) lessonData.timeLimit = timeLimit;
-    }
-    
-    // Add assignment-specific fields if this is an assignment
-    if (type === "assignment") {
-      if (rubric) lessonData.rubric = typeof rubric === 'string' ? rubric : JSON.stringify(rubric);
-      if (dueDate) lessonData.dueDate = new Date(dueDate);
-      if (fileTypes) lessonData.fileTypes = fileTypes;
-      if (maxFileSize) lessonData.maxFileSize = maxFileSize;
-      if (maxFiles) lessonData.maxFiles = maxFiles;
-    }
-    
-    console.log("Creating lesson with data:", JSON.stringify(lessonData, null, 2));
-    
-    // Create the lesson with all relevant fields
-    const lesson = await prisma.lesson.create({
-      data: lessonData
-    })
-    
-    console.log("Lesson created:", lesson.id, "with type:", lesson.type)
-    return NextResponse.json(
-      { 
-        status: 201,
-        data: lesson
-      },
-      { status: 201 }
-    )
   } catch (error) {
-    console.error("Error creating lesson:", error)
-    return NextResponse.json(
-      { error: "Failed to create lesson" },
-      { status: 500 }
-    )
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 } 
