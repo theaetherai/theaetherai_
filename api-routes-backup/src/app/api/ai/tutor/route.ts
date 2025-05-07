@@ -1,25 +1,20 @@
-import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+﻿import { NextResponse } from "next/server"
 
-// Minimal test route to debug build issues
+function isValidUUID(uuid: string | undefined) {
+  return typeof uuid === 'string' && /^[0-9a-fA-F-]{36}$/.test(uuid)
+}
 export async function POST(req: Request) {
+  console.log(API endpoint hit: POST /api/C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\ai\tutor\route.ts)
+  
   try {
-    console.log("AI Tutor endpoint hit");
-    
-    // Only include auth check as it's fundamental
-    const { userId } = auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    
-    // Return a simple response without accessing any external services
     return NextResponse.json({ 
-      status: "ok",
-      message: "This is a test response from the AI tutor endpoint" 
-    });
-    
+      status: 201, 
+      message: "This is a test response from /api/C:\Users\HP\Desktop\Mini_project\Aethemus\src\app\api\ai\tutor\route.ts endpoint",
+      data: { id: "new-item", createdAt: new Date().toISOString() }
+    })
   } catch (error) {
-    console.error("Error in minimal test route:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error('Error in minimal test route:', error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
-} 
+}
+

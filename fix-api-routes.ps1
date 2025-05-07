@@ -32,7 +32,8 @@ function Generate-SimpleRoute {
     }
 
     # Determine what kinds of HTTP methods the file has
-    $content = Get-Content $routePath -Raw
+    # Read the file without using -Raw parameter
+    $content = Get-Content $routePath | Out-String
     $hasPatch = $content -match "export\s+async\s+function\s+PATCH"
     $hasPost = $content -match "export\s+async\s+function\s+POST"
     $hasGet = $content -match "export\s+async\s+function\s+GET"
@@ -40,7 +41,7 @@ function Generate-SimpleRoute {
     $hasPut = $content -match "export\s+async\s+function\s+PUT"
 
     # Build segment path string for logging
-    $segmentPath = $segments -join "/"
+    $apiPath = "/api/" + ($segments -join "/")
 
     # Start building the new file content
     $newContent = @"
@@ -58,12 +59,12 @@ function isValidUUID(uuid: string | undefined) {
         if ($params.Count -eq 0) {
             $newContent += @"
 export async function GET(req: Request) {
-  console.log(`API endpoint hit: GET $segmentPath`)
+  console.log(`API endpoint hit: GET $apiPath`)
   
   try {
     return NextResponse.json({ 
       status: 200, 
-      message: "This is a test response from $segmentPath"
+      message: "This is a test response from $apiPath endpoint"
     })
   } catch (error) {
     console.error('Error in minimal test route:', error)
@@ -81,12 +82,12 @@ export async function GET(
   { params }: { params: { $paramName`: string } }
 ) {
   const { $paramName } = params
-  console.log(`API endpoint hit: GET $segmentPath with $paramName=\${$paramName}`)
+  console.log(`API endpoint hit: GET $apiPath with $paramName=\${$paramName}`)
   
   try {
     return NextResponse.json({ 
       status: 200, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       $paramName
     })
   } catch (error) {
@@ -109,12 +110,12 @@ export async function GET(
   { params }: { params: { $paramsDeclaration } }
 ) {
   const { $paramsList } = params
-  console.log(`API endpoint hit: GET $segmentPath with parameters`)
+  console.log(`API endpoint hit: GET $apiPath with parameters`)
   
   try {
     return NextResponse.json({ 
       status: 200, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       $paramsOutput
     })
   } catch (error) {
@@ -132,12 +133,12 @@ export async function GET(
         if ($params.Count -eq 0) {
             $newContent += @"
 export async function POST(req: Request) {
-  console.log(`API endpoint hit: POST $segmentPath`)
+  console.log(`API endpoint hit: POST $apiPath`)
   
   try {
     return NextResponse.json({ 
       status: 201, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       data: { id: "new-item", createdAt: new Date().toISOString() }
     })
   } catch (error) {
@@ -160,12 +161,12 @@ export async function POST(
   { params }: { params: { $paramsDeclaration } }
 ) {
   const { $paramsList } = params
-  console.log(`API endpoint hit: POST $segmentPath with parameters`)
+  console.log(`API endpoint hit: POST $apiPath with parameters`)
   
   try {
     return NextResponse.json({ 
       status: 201, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       $paramsOutput,
       data: { id: "new-item", createdAt: new Date().toISOString() }
     })
@@ -192,12 +193,12 @@ export async function PATCH(
   { params }: { params: { $paramsDeclaration } }
 ) {
   const { $paramsList } = params
-  console.log(`API endpoint hit: PATCH $segmentPath with parameters`)
+  console.log(`API endpoint hit: PATCH $apiPath with parameters`)
   
   try {
     return NextResponse.json({ 
       status: 200, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       $paramsOutput,
       data: { updated: true, updatedAt: new Date().toISOString() }
     })
@@ -223,12 +224,12 @@ export async function PUT(
   { params }: { params: { $paramsDeclaration } }
 ) {
   const { $paramsList } = params
-  console.log(`API endpoint hit: PUT $segmentPath with parameters`)
+  console.log(`API endpoint hit: PUT $apiPath with parameters`)
   
   try {
     return NextResponse.json({ 
       status: 200, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       $paramsOutput,
       data: { replaced: true, updatedAt: new Date().toISOString() }
     })
@@ -254,12 +255,12 @@ export async function DELETE(
   { params }: { params: { $paramsDeclaration } }
 ) {
   const { $paramsList } = params
-  console.log(`API endpoint hit: DELETE $segmentPath with parameters`)
+  console.log(`API endpoint hit: DELETE $apiPath with parameters`)
   
   try {
     return NextResponse.json({ 
       status: 200, 
-      message: "This is a test response from $segmentPath",
+      message: "This is a test response from $apiPath endpoint",
       $paramsOutput
     })
   } catch (error) {
@@ -299,7 +300,10 @@ foreach ($routeFile in $routeFiles) {
     
     # Generate and save simplified route
     $newContent = Generate-SimpleRoute -routePath $routeFile
-    $newContent | Out-File -FilePath $routeFile -Encoding utf8
+    
+    # Write to file with literal path (no wildcard expansion)
+    $routeFile = $routeFile -replace "\[", '`[' -replace "\]", '`]'
+    $newContent | Out-File -LiteralPath $routeFile -Encoding utf8
     Write-Host "Updated $routeFile with minimal implementation"
     
     $processedRoutes++
