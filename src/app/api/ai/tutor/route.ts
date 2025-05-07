@@ -8,19 +8,18 @@ import { client } from "../../../../lib/prisma"; // Use the shared client instan
 
 // Initialize OpenAI in a separate function to avoid potential circular dependencies
 function getOpenAIClient() {
-  const openaiApiKey = process.env.GROQ_API_KEY || process.env.OPEN_AI_KEY;
-  const useGroq = !!process.env.GROQ_API_KEY;
+  const openaiApiKey = process.env.OPEN_AI_KEY;
+  
   
   return new OpenAI({
     apiKey: openaiApiKey,
-    baseURL: useGroq ? 'https://api.groq.com/openai/v1' : undefined,
+    baseURL:  'https://api.groq.com/openai/v1' ,
   });
 }
 
 // Get the appropriate model in a separate function
 function getAIModel() {
-  const useGroq = !!process.env.GROQ_API_KEY;
-  return useGroq ? "llama3-8b-8192" : "gpt-3.5-turbo";
+  return "qwen-qwq-32b";
 }
 
 // Build system prompt in a separate function to simplify the main handler
